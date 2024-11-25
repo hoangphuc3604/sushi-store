@@ -1,0 +1,91 @@
+<%- include('partials/header') %>
+
+    <!-- Hero Section -->
+    <div class="hero">
+      <h1>Chào mừng đến với SuShiX </h1>
+      <p>Hệ thống nhà hàng SuShiX với 15 chi nhánh phủ khắp các thành phố lớn như Hồ Chí Minh, Hà Nội, Đà Nẵng, đã trở thành điểm đến quen thuộc của thực khách yêu ẩm thực Nhật Bản. Với sự tin yêu của khách hàng, SuShiX không chỉ cam kết mang lại trải nghiệm ẩm thực chất lượng mà còn đặt mục tiêu phát triển mạnh mẽ hơn, mở rộng quy mô trên toàn quốc, nhằm đưa tinh hoa văn hóa Nhật Bản đến gần hơn với người Việt.</p>
+    </div>
+
+    <!-- Menu Section -->
+    <div class="container py-2">
+        <div class="row g-4">
+
+            <!-- <button class="btn-arrow">
+                <i class="fas fa-chevron-left"></i>
+            </button> -->
+          
+            <% allMonAn.forEach(monAn => { %>
+                <!-- Item 1 -->
+                <div class="col-md-3 col-sm-6">
+                    <form action="booking/cart/add" method="POST" class="food-card">
+                        <a class="food-card" href="">
+                            <div class="food-item position-relative p-3">
+                                <div class="promo">Promo</div>
+                                <img src="https://media-cdn.tripadvisor.com/media/photo-p/0a/1b/b2/3a/sushi-hokkaido-sachi.jpg" alt="Bánh Mì Cô Chun">
+                                <h5 class="mt-3"><%= monAn.TENMON %></h5>
+                                <p class="text-muted mb-2"><%= monAn.PHANMUC %></p>
+                                <div class="details d-flex justify-content-between align-items-center">
+                                    <span><i class="fa-solid fa-star text-warning"></i> 4.7</span>
+                                    <span><i class="fa-solid fa-clock"></i> 15 phút</span>
+                                    <span><i class="fa-solid fa-location-dot"></i> 1.5 km</span>
+                                </div>
+                                <p class="mt-2"><%= monAn.GIA %>đ</p>
+                                <p class="mt-2" style="color: black;"><%= monAn.KHUVUC %></p>
+
+                                <input type="hidden" name="email" value="<%= khachHang.EMAIL %>">
+                                <input type="hidden" name="food" value="<%= monAn.MAMON %>">
+                                
+                                <!-- Nút dấu cộng -->
+                                <button type="submit" class="add-to-cart-btn btn btn-warning position-absolute" data-id="<%= monAn.MAMON %>">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </a>
+                    </form>
+                </div>                
+            <% }) %>
+
+            <!-- <button class="btn-arrow">
+                <i class="fas fa-chevron-right"></i>
+            </button> -->
+        </div>
+
+        <div class="pagination-section">
+            <nav aria-label="Page navigation">
+                <ul
+                    class="pagination justify-content-center"
+                >
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">3</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const buttons = document.querySelectorAll(".add-to-cart-btn");
+
+            buttons.forEach(button => {
+                
+            });
+        });
+    </script>
+
+<%- include('partials/footer') %>
