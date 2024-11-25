@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css" integrity="sha512-9xKTRVabjVeZmc+GUW8GgSmcREDunMM+Dt/GrzchfN8tkwHizc5RP4Ok/MXFFy5rIjJjzhndFScTceq5e6GvVQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
+      <div class="container">
+        <a href="/" class="navbar-brand">
+          <img src="/images/logo.jpg" alt="Logo" class="logo">
+        </a>
+        <a class="navbar-brand fw-bold" href="/#" style="color: orangered;">SuShiX</a>
+
+        <!-- Thanh tìm kiếm ở giữa -->
+        <form class="d-flex search-form" action="/search" method="POST">
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Tìm kiếm món ăn..."
+            aria-label="Search"
+            name="query"
+          />
+          <button class="btn btn-outline-success" type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </form>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item fw-semibold">
+              <a class="nav-link" href="/#">Trang Chủ</a>
+            </li>
+            <li class="nav-item fw-semibold">
+              <a class="nav-link" href="/booking/table">Đặt bàn</a>
+            </li>
+            <li class="nav-item fw-semibold">
+              <a class="nav-link" href="/booking/food/1">Đặt món</a>
+            </li>
+            <li class="nav-item fw-semibold">
+              <a class="nav-link" href="#contact">Liên Hệ</a>
+            </li>
+            <li>
+              <div class="position-absolute top-0 end-0 p-3">
+                <div class="dropdown">
+                  <img
+                    src="/images/avatar.jpg"
+                    class="rounded-circle"
+                    width="30"
+                    height="30"
+                    alt="Avatar"
+                    id="userMenu"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  />
+                  <ul
+                    class="dropdown-menu dropdown-menu-end"
+                    aria-labelledby="userMenu"
+                  >
+                    <li>
+                      <a class="dropdown-item" href="/profile"
+                        >Trang Cá Nhân</a
+                      >
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="/history"
+                        >Lịch Sử Mua Hàng</a
+                      >
+                    </li>
+                    <li>
+                      <a class="dropdown-item text-danger" href="/auth/logout"
+                        >Đăng Xuất</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+            <li style="margin-left: 10px;">
+              <a href="/booking/cart/<%= khachHang.MAKHACHHANG %>" class="btn btn-outline-danger">
+                <i class="fa-solid fa-cart-shopping"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
