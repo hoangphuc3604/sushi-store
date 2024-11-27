@@ -150,3 +150,53 @@ html, body {
 .pagination-section {
   justify-content: flex-end;
 }
+
+.sidebar {
+  background-color: #ff6347;
+  min-height: 100vh;
+  font-weight: 500;
+  color: white;
+}
+.sidebar .nav-link {
+  color: white;
+}
+.sidebar .nav-link:hover {
+  background-color: #ff4500;
+}
+.card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.btn-orange {
+  background-color: #ff6347;
+  color: white;
+}
+.btn-orange:hover {
+  background-color: #ff4500;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+      display: none;
+  }         
+}
+
+.card-header {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #e64a19;
+}
+
+.table thead {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
