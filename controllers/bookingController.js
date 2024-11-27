@@ -8,7 +8,7 @@ class bookingController {
     async getTableBooking(req, res) {
         const {email, role} = req;
         const allKhuVuc = await KhuVuc.getAll();
-        const khachHang = await KhachHang.getKhachHangByEmail(email);
+        const user = await KhachHang.getKhachHangByEmail(email);
 
         const chiNhanh = {};
         for (const cur of allKhuVuc) {
@@ -16,7 +16,7 @@ class bookingController {
             chiNhanh[cur.MAKHUVUC] = chiNhanhs.map(cn => cn.TENCHINHANH);
         }
 
-        res.render("booking/tableBooking", { role, khachHang, chiNhanh, allKhuVuc, title: "Đặt Bàn" });
+        res.render("booking/tableBooking", { role, user, chiNhanh, allKhuVuc, title: "Đặt Bàn" });
     }
 
     async tableBooking(req, res) {
@@ -29,14 +29,14 @@ class bookingController {
         const allMonAn = await MonAn.getMonAnByIndex((currentPage - 1) * PER_PAGE);
         const length = await MonAn.getTableLength();
         const allKhuVuc = await KhuVuc.getAll();
-        const khachHang = await KhachHang.getKhachHangByEmail(email);
+        const user = await KhachHang.getKhachHangByEmail(email);
         const totalPages = Math.ceil(length / PER_PAGE);
-        res.render("booking/foodBooking", { khachHang, allMonAn, allKhuVuc, currentPage, totalPages, title: "Đặt Món" });
+        res.render("booking/foodBooking", { user, allMonAn, allKhuVuc, currentPage, totalPages, role, title: "Đặt Món" });
     }
 
     async cartAdding(req, res) {
-        const {email, food} = req.body;
-        GioHang.createGioHang(email, food);
+        const {email, food, staff} = req.body;
+        GioHang.createGioHang(email, food, staff);
         const previousUrl = req.get('Referer') || '/';
         res.redirect(previousUrl);
     }
@@ -44,11 +44,11 @@ class bookingController {
     async getCart(req, res) {
         const {email, role} = req;
         const {id} = req.params;
-        const khachHang = await KhachHang.getKhachHangByEmail(email);
+        const user = await KhachHang.getKhachHangByEmail(email);
         const gioHang = await GioHang.getGioHangByMaKhachHang(parseInt(id));
         const soLuong = gioHang.length;
         const tongTien = gioHang.reduce((acc, cur) => acc + cur.GIA * cur.SOLUONG, 0);
-        res.render("booking/cart", { gioHang, soLuong, tongTien, khachHang, title: "Giỏ Hàng" });
+        res.render("booking/cart", { gioHang, soLuong, tongTien, user, role, title: "Giỏ Hàng" });
     }
 
     async cartUpdate(req, res) {
