@@ -84,6 +84,30 @@ class MonAn {
       .query("SELECT MONAN.MAMON, MONAN.TENMON TENMON, MONAN.GIA GIA, PHANMUC.TENPHANMUC PHANMUC, KHUVUC.TENKHUVUC KHUVUC, KHUVUC.MAKHUVUC MAKHUVUC FROM MONAN, PHANMUC, THUCDON, KHUVUC WHERE MONAN.MAPHANMUC = PHANMUC.MAPHANMUC AND PHANMUC.MATHUCDON = THUCDON.MATHUCDON AND THUCDON.MAKHUVUC = KHUVUC.MAKHUVUC ORDER BY MONAN.MAMON OFFSET @index ROWS FETCH NEXT 8 ROWS ONLY");
     return result.recordset;
   }
+
+  static async getSearchLength(query) {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("query", sql.VarChar, `%${query.toLowerCase()}%`)
+      .query("SELECT COUNT(*) AS total FROM MONAN WHERE LOWER(TENMON) LIKE @query");
+    return result.recordset[0].total;
+  }
+
+  static async searchMonAnByIndex(query, index) {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("query", sql.VarChar, `%${query.toLowerCase()}%`)
+      .input("index", sql.Int, index)
+      .query(`
+        SELECT MONAN.MAMON, MONAN.TENMON TENMON, MONAN.GIA GIA, PHANMUC.TENPHANMUC PHANMUC, KHUVUC.TENKHUVUC KHUVUC, KHUVUC.MAKHUVUC MAKHUVUC 
+        FROM MONAN, PHANMUC, THUCDON, KHUVUC 
+        WHERE MONAN.MAPHANMUC = PHANMUC.MAPHANMUC AND PHANMUC.MATHUCDON = THUCDON.MATHUCDON AND THUCDON.MAKHUVUC = KHUVUC.MAKHUVUC AND LOWER(TENMON) LIKE @query
+        ORDER BY MONAN.MAMON OFFSET @index ROWS FETCH NEXT 8 ROWS ONLY
+      `);
+    return result.recordset;
+  }
 }
 
 module.exports = MonAn;
