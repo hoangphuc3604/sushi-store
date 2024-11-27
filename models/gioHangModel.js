@@ -17,7 +17,7 @@ class GioHang {
         return result.recordset;
     }
 
-    static async createGioHang(email, food) {
+    static async createGioHang(email, food, staff) {
         const pool = await poolPromise;
 
         const check = await this.getGioHang(email, food);
