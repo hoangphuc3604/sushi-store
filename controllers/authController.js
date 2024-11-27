@@ -26,13 +26,18 @@ class authControllers {
 
     const token = createToken({
       email: user.email,
-      role: "user",
+      role: user.role,
     });
 
     res.cookie("accessToken", token, {
       expires: new Date(Date.now() + 60 * 60 * 1000),
     });
-    res.redirect("/");
+    
+    if (user.role === "staff") {
+      return res.redirect("/staff");
+    } else {
+      return res.redirect("/");
+    }
   }
 
   async logout(req, res) {
