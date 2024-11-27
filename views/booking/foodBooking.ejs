@@ -28,8 +28,9 @@
                             <p class="mt-2"><%= monAn.GIA %>đ</p>
                             <p class="mt-2" style="color: black;"><%= monAn.KHUVUC %></p>
 
-                            <input type="hidden" name="email" value="<%= khachHang.EMAIL %>">
+                            <input type="hidden" name="email" value="<%= user.EMAIL %>">
                             <input type="hidden" name="food" value="<%= monAn.MAMON %>">
+                            <input type="hidden" name="staff" value="">
                             
                             <!-- Nút dấu cộng -->
                             <button type="submit" class="add-to-cart-btn btn btn-warning position-absolute" data-id="<%= monAn.MAMON %>">
