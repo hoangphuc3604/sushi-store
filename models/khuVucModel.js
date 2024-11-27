@@ -59,6 +59,15 @@ class KhuVuc {
       .query("SELECT * FROM CHINHANH WHERE MAKHUVUC = @maKhuVuc");
     return result.recordset;
   }
+
+  static async getAllPhanMucByMaKhuVuc(maKhuVuc) {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("maKhuVuc", sql.Int, maKhuVuc)
+      .query("SELECT P.MAPHANMUC, P.TENPHANMUC FROM PHANMUC P, THUCDON T, KHUVUC K WHERE K.MAKHUVUC = @maKhuVuc AND K.MAKHUVUC = T.MAKHUVUC AND P.MATHUCDON = T.MATHUCDON");
+    return result.recordset;
+  }
 }
 
 module.exports = KhuVuc;
