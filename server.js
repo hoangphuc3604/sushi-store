@@ -19,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/", require("./routes/dataRoutes"));
 app.use("/booking", require("./routes/bookingRoutes"));
+app.use("/staff", require("./routes/staffRoutes"));
 
 app.listen(port, () => {
   console.log(`Server đang chạy tại http://localhost:${port}`);
