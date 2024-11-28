@@ -42,7 +42,58 @@ class staffController {
     async updateDish(req, res) {
         let {email, role} = req;
         const user = {};
-        res.render("staff/updateDish", { title: "Update Dish", user, role });
+        const allMonAn = [
+            {
+                MAMON: 1,
+                TENMON: "Sushi cá hồi",
+                TRANGTHAI: 1,
+                GIA: 100000,
+            },
+            {
+                MAMON: 2,
+                TENMON: "Sushi cá thu",
+                TRANGTHAI: 1,
+                GIA: 200000,
+            },
+            {
+                MAMON: 3,
+                TENMON: "Sushi cá trích",
+                TRANGTHAI: 1,
+                GIA: 200000,
+            },
+            {
+                MAMON: 4,
+                TENMON: "Sushi cá basa",
+                TRANGTHAI: 0, 
+                GIA: 200000,
+            },
+        ]
+        res.render("staff/dishUpdate", { title: "Update Dish", user, role, allMonAn });
+    }
+
+    async renderUpdateDishWithId(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {id} = req.params;
+        const monAn = {
+            MAMON: 1,
+            TENMON: "Sushi cá hồi",
+            TRANGTHAIPHUCVU: 1,
+            GIA: 100000,
+            MAPHANMUC: 1,
+        }
+        res.render("staff/updateDishByID", { title: "Update Dish", user, role, monAn });
+    }
+
+    async updateDishWithId(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {id} = req.params;
+        const {TENMON, GIA, MAPHANMUC, TRANGTHAIPHUCVU} = req.body;
+
+
+        
+        res.redirect("/staff/update-dish");
     }
 
     async search(req, res) {
@@ -57,6 +108,40 @@ class staffController {
 
         res.render("staff/search", { title: "Search", user, role, allMonAn, currentPage, totalPages });
     }
+
+    async renderBooking(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const allMonAn = [
+            {
+                MAMON: 1,
+                TENMON: "Sushi cá hồi",
+                GIA: 100000,
+            },
+            {
+                MAMON: 2,
+                TENMON: "Sushi cá thu",
+                GIA: 200000,
+            },
+            {
+                MAMON: 3,
+                TENMON: "Sushi cá trích",
+                GIA: 200000,
+            },
+            {
+                MAMON: 4,
+                TENMON: "Sushi cá basa",
+                GIA: 200000,
+            },
+        ]
+        res.render("staff/dishBooking", { title: "Booking", user, role, allMonAn });
+    }
+
+    async booking(req, res) {
+        let {email, role} = req;
+        const user = {};
+        console.log(req.body);
+    }
 }
 
-module.exports = new staffController();
+ module.exports = new staffController();
