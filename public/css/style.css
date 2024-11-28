@@ -27,6 +27,9 @@ html, body {
 .form-select {
     border: 2px solid #FF6347; /* Đỏ cam */
 }
+.form-control{
+    border: 2px solid #FF6347; /* Đỏ cam */
+}
 .btn-primary {
     background-color: #FF6347;
     border: none;
@@ -181,6 +184,13 @@ html, body {
       display: none;
   }         
 }
+
+:root {
+  --primary-color: #ff6347;
+  --secondary-color: #ffe0b2;
+  --text-color: #ffffff;
+}
+
 
 .card-header {
   background-color: var(--primary-color);
