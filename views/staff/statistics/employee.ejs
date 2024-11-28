@@ -9,15 +9,15 @@
             <div class="container mt-4">
                 <h1 class="mb-4">Thống Kê Thông Tin Nhân Viên</h1>
                 
-                <form class="row g-3 align-items-center mb-4" method="GET" action="/staff/search">
+                <form class="row g-3 align-items-center mb-4" method="POST" action="/staff/search">
                     <div class="col-md-4">
                         <label for="searchName" class="form-label">Tìm kiếm nhân viên</label>
-                        <input type="text" class="form-control" id="searchName" name="query" placeholder="Nhập tên nhân viên">
+                        <input type="text" class="form-control" id="searchName" name="query" placeholder="Nhập từ khóa">
                     </div>
                     <div class="col-md-4">
                         <label for="searchBranch" class="form-label">Chọn chi nhánh</label>
                         <select class="form-select" id="searchBranch" name="branch">
-                            <option value="">Tất cả</option>
+                            <option value="all">Tất cả</option>
                             <% branches.forEach(branch => { %>
                                 <option value="<%= branch.id %>"><%= branch.name %></option>
                             <% }) %>
