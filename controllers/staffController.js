@@ -92,7 +92,7 @@ class staffController {
         const {TENMON, GIA, MAPHANMUC, TRANGTHAIPHUCVU} = req.body;
 
 
-        
+
         res.redirect("/staff/update-dish");
     }
 
@@ -141,6 +141,55 @@ class staffController {
         let {email, role} = req;
         const user = {};
         console.log(req.body);
+    }
+
+    async renderRevenueStatistics(req, res) {
+        let {email, role} = req;
+        const user = {};
+        let type, startDate, endDate;
+        type = "day";
+        startDate = new Date().toISOString().split("T")[0];
+        endDate = new Date().toISOString().split("T")[0];
+        let revenueStats = [{
+            time: new Date().toISOString().split("T")[0],
+            totalRevenue: 1000000,
+            orderCount: 10,
+            note: "-",
+        }]
+        res.render("staff/statistics/revenue", { title: "Revenue Statistics", startDate, endDate, type, revenueStats, user, role });
+    }
+
+    async getRevenueStatistics(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {type, startDate, endDate} = req.body;
+        let revenueStats = [
+            {
+                time: new Date().toISOString().split("T")[0],
+                totalRevenue: 1000000,
+                orderCount: 10,
+                note: "-",
+            },
+            {
+                time: new Date().toISOString().split("T")[0],
+                totalRevenue: 1000000,
+                orderCount: 10,
+                note: "-",
+            },
+            {
+                time: new Date().toISOString().split("T")[0],
+                totalRevenue: 1000000,
+                orderCount: 10,
+                note: "-",
+            },
+            {
+                time: new Date().toISOString().split("T")[0],
+                totalRevenue: 1000000,
+                orderCount: 10,
+                note: "-",
+            },
+        ]
+        res.render("staff/statistics/revenue", { title: "Revenue Statistics", startDate, endDate, type, revenueStats, user, role });
     }
 }
 
