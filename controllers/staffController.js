@@ -96,7 +96,7 @@ class staffController {
         res.redirect("/staff/update-dish");
     }
 
-    async search(req, res) {
+    async dishSearch(req, res) {
         let {email, role} = req;
         const user = {};
         const {query} = req.body;
@@ -106,7 +106,7 @@ class staffController {
         const length = await MonAn.getSearchLength(query);
         const totalPages = Math.ceil(length / PER_PAGE);
 
-        res.render("staff/search", { title: "Search", user, role, allMonAn, currentPage, totalPages });
+        res.render("staff/dishSearch", { title: "Dish Searching", user, role, allMonAn, currentPage, totalPages });
     }
 
     async renderBooking(req, res) {
@@ -272,6 +272,220 @@ class staffController {
         const employees = [];
 
         res.render("staff/statistics/employee", { title: "Employee Statistics", branches, employees, user, role });
+    }
+
+    async searhStaff(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {query, branch} = req.body;
+        console.log(query, branch);
+        const employees = [
+            {
+                id: 1,
+                name: "Nguyễn Văn A",
+                branchName: "Chi nhánh 1",
+                gender: "Nam",
+                phone: "0123456789",
+                address: "Hà Nội",
+                startDate: "2021-01-01",
+                salary: 10000000,
+            },
+        ]
+        const branches =[
+            {
+                id: 1,
+                name: "Chi nhánh 1",
+            },
+            {
+                id: 2,
+                name: "Chi nhánh 2",
+            },
+            {
+                id: 3,
+                name: "Chi nhánh 3",
+            },
+            {
+                id: 4,
+                name: "Chi nhánh 4",
+            },
+        ]
+        res.render("staff/statistics/employee", { title: "Employee Statistics", branches, employees, user, role });
+    }
+
+    async renderInvoices(req, res) {
+        let {email, role} = req;
+        const user = {};
+
+        const invoices = [
+            {
+                maHoaDon: 1,
+                tongTien: 1000000,
+                soTienGiam: 0,
+                thanhTien: 1000000,
+                maPhieu: 1,
+                maChuongTrinh: 1,
+            },
+            {
+                maHoaDon: 2,
+                tongTien: 2000000,
+                soTienGiam: 0,
+                thanhTien: 2000000,
+                maPhieu: 2,
+                maChuongTrinh: 2,
+            },
+            {
+                maHoaDon: 3,
+                tongTien: 3000000,
+                soTienGiam: 0,
+                thanhTien: 3000000,
+                maPhieu: 3,
+                maChuongTrinh: 3,
+            },
+            {
+                maHoaDon: 4,
+                tongTien: 4000000,
+                soTienGiam: 0,
+                thanhTien: 4000000,
+                maPhieu: 4,
+                maChuongTrinh: 4,
+            }
+        ]
+        res.render("staff/statistics/invoice", { title: "Invoices", invoices, user, role });
+    }
+
+    async searchInvoices(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {maKhachHang, ngayLap} = req.body;
+        const invoices = [
+            {
+                maHoaDon: 1,
+                tongTien: 1000000,
+                soTienGiam: 0,
+                thanhTien: 1000000,
+                maPhieu: 1,
+                maChuongTrinh: 1,
+            },
+            {
+                maHoaDon: 2,
+                tongTien: 2000000,
+                soTienGiam: 0,
+                thanhTien: 2000000,
+                maPhieu: 2,
+                maChuongTrinh: 2,
+            },
+            {
+                maHoaDon: 3,
+                tongTien: 3000000,
+                soTienGiam: 0,
+                thanhTien: 3000000,
+                maPhieu: 3,
+                maChuongTrinh: 3,
+            },
+            {
+                maHoaDon: 4,
+                tongTien: 4000000,
+                soTienGiam: 0,
+                thanhTien: 4000000,
+                maPhieu: 4,
+                maChuongTrinh: 4,
+            }
+        ]
+        res.render("staff/statistics/invoice", { title: "Invoices", invoices, user, role });
+    }
+
+    async renderOrders(req, res) {
+        let {email, role} = req;
+        const user = {};
+        let ngayLap, maNhanVien, maKhachHang;
+        const orders = [
+            {
+                maPhieu: 1,
+                ngayLap: "2021-01-01",
+                maNhanVien: 1,
+                maKhachHang: 1,
+            },
+            {
+                maPhieu: 2,
+                ngayLap: "2021-01-02",
+                maNhanVien: 2,
+                maKhachHang: 2,
+            },
+            {
+                maPhieu: 3,
+                ngayLap: "2021-01-03",
+                maNhanVien: 3,
+                maKhachHang: 3,
+            },
+            {
+                maPhieu: 4,
+                ngayLap: "2021-01-04",
+                maNhanVien: 4,
+                maKhachHang: 4,
+            },
+        ]
+        res.render("staff/statistics/order", { title: "Orders", orders, ngayLap, maNhanVien, maKhachHang, user, role });
+    }
+
+    async searchOrders(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {maKhachHang, ngayLap, maNhanVien} = req.body;
+        const orders = [
+            {
+                maPhieu: 1,
+                ngayLap: "2021-01-01",
+                maNhanVien: 1,
+                maKhachHang: 1,
+            },
+            {
+                maPhieu: 2,
+                ngayLap: "2021-01-02",
+                maNhanVien: 2,
+                maKhachHang: 2,
+            },
+            {
+                maPhieu: 3,
+                ngayLap: "2021-01-03",
+                maNhanVien: 3,
+                maKhachHang: 3,
+            },
+            {
+                maPhieu: 4,
+                ngayLap: "2021-01-04",
+                maNhanVien: 4,
+                maKhachHang: 4,
+            },
+        ]
+        res.render("staff/statistics/order", { title: "Orders", orders, ngayLap, maKhachHang, maNhanVien, user, role });
+    }
+
+    async renderEditOrder(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {id} = req.params;
+        const order = {
+            maPhieu: 1,
+            ngayLap: "2021-01-01",
+            maNhanVien: 1,
+            maKhachHang: 1,
+        }
+        res.render("staff/statistics/editOrder", { title: "Edit Order", order, user, role });
+    }
+
+    async editOrder(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {id} = req.params;
+        console.log(id);
+    }
+
+    async deleteOrder(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {id} = req.params;
+        console.log(id);
+        res.redirect("/staff/orders");
     }
 }
 
