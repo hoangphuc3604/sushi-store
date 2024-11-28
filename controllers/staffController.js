@@ -191,6 +191,88 @@ class staffController {
         ]
         res.render("staff/statistics/revenue", { title: "Revenue Statistics", startDate, endDate, type, revenueStats, user, role });
     }
+
+    async renderServiceStatistics(req, res) {
+        let {email, role} = req;
+        const user = {};
+        let type, startDate, endDate;
+        type = "day";
+        startDate = new Date().toISOString().split("T")[0];
+        endDate = new Date().toISOString().split("T")[0];
+        let employeeStats = [{
+            id: 1,
+            name: "Nguyễn Văn A",
+            servicePoint: 10,
+            billCount: 10,
+            note: "-",
+        }]
+
+        res.render("staff/statistics/service", { title: "Employee Statistics", type, startDate, endDate, employeeStats, user, role });
+    }
+
+    async getServiceStatistics(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {type, startDate, endDate} = req.body;
+        let employeeStats = [
+            {
+                id: 1,
+                name: "Nguyễn Văn A",
+                servicePoint: 10,
+                billCount: 10,
+                note: "-",
+            },
+            {
+                id: 2,
+                name: "Nguyễn Văn B",
+                servicePoint: 10,
+                billCount: 10,
+                note: "-",
+            },
+            {
+                id: 3,
+                name: "Nguyễn Văn C",
+                servicePoint: 10,
+                billCount: 10,
+                note: "-",
+            },
+            {
+                id: 4,
+                name: "Nguyễn Văn D",
+                servicePoint: 10,
+                billCount: 10,
+                note: "-",
+            },
+        ]
+
+        res.render("staff/statistics/service", { title: "Employee Statistics", type, startDate, endDate, employeeStats, user, role });
+    }
+
+    async renderEmployeeStatistics(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const branches =[
+            {
+                id: 1,
+                name: "Chi nhánh 1",
+            },
+            {
+                id: 2,
+                name: "Chi nhánh 2",
+            },
+            {
+                id: 3,
+                name: "Chi nhánh 3",
+            },
+            {
+                id: 4,
+                name: "Chi nhánh 4",
+            },
+        ]
+        const employees = [];
+
+        res.render("staff/statistics/employee", { title: "Employee Statistics", branches, employees, user, role });
+    }
 }
 
  module.exports = new staffController();
