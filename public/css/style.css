@@ -210,3 +210,12 @@ html, body {
   background-color: var(--primary-color);
   color: var(--text-color);
 }
+
+.table thead th {
+  background-color: #f8f9fa;
+  text-align: center;
+}
+
+.table tbody td {
+  text-align: center;
+}
