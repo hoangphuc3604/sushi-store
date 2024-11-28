@@ -12,7 +12,7 @@
                 <form action="/staff/statistics/revenue" method="post" class="row g-3 align-items-center mb-4">
                     <div class="col-md-3">
                         <label for="statType" class="form-label">Loại Thống Kê</label>
-                        <select class="form-select" id="statType">
+                        <select class="form-select" id="statType" name="statType">
                             <option value="day" selected>Theo Ngày</option>
                             <option value="month">Theo Tháng</option>
                             <option value="quarter">Theo Quý</option>
@@ -22,12 +22,12 @@
             
                     <div class="col-md-3">
                         <label for="startDate" class="form-label">Ngày Bắt Đầu</label>
-                        <input type="date" id="startDate" class="form-control" value="<%= startDate %>" />
+                        <input type="date" id="startDate" name="startDate" class="form-control" value="<%= startDate %>" />
                     </div>
             
                     <div class="col-md-3">
                         <label for="endDate" class="form-label">Ngày Kết Thúc</label>
-                        <input type="date" id="endDate" class="form-control" value="<%= endDate %>" />
+                        <input type="date" id="endDate" name="endDate" class="form-control" value="<%= endDate %>" />
                     </div>
             
                     <div class="col-md-2">
