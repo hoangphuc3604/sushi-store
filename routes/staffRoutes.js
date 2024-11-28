@@ -11,5 +11,7 @@ router.get("/update-dish", authMiddleware, staffController.updateDish);
 router.post("/search/:page", authMiddleware, staffController.search);
 router.get("/booking", authMiddleware, staffController.renderBooking);
 router.post("/booking", authMiddleware, staffController.booking);
+router.get("/statistics/revenue", authMiddleware, staffController.renderRevenueStatistics);
+router.post("/statistics/revenue", authMiddleware, staffController.getRevenueStatistics);
 
 module.exports = router;
