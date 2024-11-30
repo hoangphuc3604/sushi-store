@@ -7,13 +7,7 @@ class staffController {
     async loadMainPage(req, res) {
         let {email, role} = req;
         const user = {MAKHACHHANG: 1};
-
-        if (role === "staff") {
-            res.render("staff/staffDashboard", { title: "Staff Dashboard", user, role });
-        } else {
-            res.clearCookie("accessToken");
-            res.redirect("/auth/login");
-        }
+        res.render("staff/staffDashboard", { title: "Dashboard", user, role });
     }
 
     async addDish(req, res) {
@@ -25,13 +19,6 @@ class staffController {
         for (const cur of allKhuVuc) {
             const phanMucs = await KhuVuc.getAllPhanMucByMaKhuVuc(cur.MAKHUVUC);
             phanMuc[cur.MAKHUVUC] = phanMucs;
-        }
-
-        if (role === "staff") {
-            res.render("staff/addDish", { title: "Add Dish", user, phanMuc, allKhuVuc, role });
-        } else {
-            res.clearCookie("accessToken");
-            res.redirect("/auth/login");
         }
     }
 
@@ -315,6 +302,8 @@ class staffController {
     async renderInvoices(req, res) {
         let {email, role} = req;
         const user = {};
+        const totalPages = 1;
+        const currentPage = parseInt(req.params.page) || 1;
 
         const invoices = [
             {
@@ -350,13 +339,16 @@ class staffController {
                 maChuongTrinh: 4,
             }
         ]
-        res.render("staff/statistics/invoice", { title: "Invoices", invoices, user, role });
+        res.render("staff/statistics/invoice", { title: "Invoices", invoices, totalPages, currentPage, user, role });
     }
 
     async searchInvoices(req, res) {
         let {email, role} = req;
         const user = {};
         const {maKhachHang, ngayLap} = req.body;
+        const totalPages = 2; // sửa lại 1
+        const currentPage = parseInt(req.params.page) || 1;
+
         const invoices = [
             {
                 maHoaDon: 1,
@@ -381,23 +373,18 @@ class staffController {
                 thanhTien: 3000000,
                 maPhieu: 3,
                 maChuongTrinh: 3,
-            },
-            {
-                maHoaDon: 4,
-                tongTien: 4000000,
-                soTienGiam: 0,
-                thanhTien: 4000000,
-                maPhieu: 4,
-                maChuongTrinh: 4,
             }
         ]
-        res.render("staff/statistics/invoice", { title: "Invoices", invoices, user, role });
+        res.render("staff/statistics/invoice", { title: "Invoices", invoices, totalPages, currentPage, user, role });
     }
 
     async renderOrders(req, res) {
         let {email, role} = req;
         const user = {};
         let ngayLap, maNhanVien, maKhachHang;
+
+        const totalPages = 2; // sửa lại 1
+        const currentPage = parseInt(req.params.page) || 1;
         const orders = [
             {
                 maPhieu: 1,
@@ -424,13 +411,17 @@ class staffController {
                 maKhachHang: 4,
             },
         ]
-        res.render("staff/statistics/order", { title: "Orders", orders, ngayLap, maNhanVien, maKhachHang, user, role });
+        res.render("staff/statistics/order", { title: "Orders", orders, ngayLap, maNhanVien, maKhachHang, totalPages, currentPage, user, role });
     }
 
     async searchOrders(req, res) {
         let {email, role} = req;
         const user = {};
         const {maKhachHang, ngayLap, maNhanVien} = req.body;
+
+        const totalPages = 2; // sửa lại 1
+        const currentPage = parseInt(req.params.page) || 1;
+
         const orders = [
             {
                 maPhieu: 1,
@@ -457,7 +448,7 @@ class staffController {
                 maKhachHang: 4,
             },
         ]
-        res.render("staff/statistics/order", { title: "Orders", orders, ngayLap, maKhachHang, maNhanVien, user, role });
+        res.render("staff/statistics/order", { title: "Orders", orders, ngayLap, maKhachHang, maNhanVien, totalPages, currentPage, user, role });
     }
 
     async renderEditOrder(req, res) {
@@ -477,7 +468,8 @@ class staffController {
         let {email, role} = req;
         const user = {};
         const {id} = req.params;
-        console.log(id);
+        const {ngayLap, maNhanVien, maKhachHang} = req.body;
+        res.redirect("/staff/orders/1");
     }
 
     async deleteOrder(req, res) {
@@ -485,7 +477,124 @@ class staffController {
         const user = {};
         const {id} = req.params;
         console.log(id);
-        res.redirect("/staff/orders");
+        res.redirect("/staff/orders/1");
+    }
+
+    async addOrder(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {ngayLap, maNhanVien, maKhachHang} = req.body;
+        console.log(ngayLap, maNhanVien, maKhachHang);
+        res.redirect("/staff/orders/1");
+    }
+
+    async renderCustomerCard(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const totalPages = 3;
+        const currentPage = parseInt(req.params.page) || 1;
+        const query = "";
+
+        // [MATHE],[NGAYLAP],[NGAYHETHAN],[DIEMTICHLUY],[TRANGTHAI],[LOAITHE],[NGAYDATHANG],[MAKHACHHANG]
+        const cards = [
+            {
+                MATHE: 1,
+                NGAYLAP: "2021-01-01",
+                NGAYHETHAN: "2022-01-01",
+                DIEMTICHLUY: 100,
+                TRANGTHAI: 1,
+                LOAITHE: "Thẻ thường",
+                NGAYDATHANG: "2021-01-01",
+                MAKHACHHANG: 1,
+            },
+            {
+                MATHE: 2,
+                NGAYLAP: "2021-01-02",
+                NGAYHETHAN: "2022-01-02",
+                DIEMTICHLUY: 200,
+                TRANGTHAI: 1,
+                LOAITHE: "Thẻ thường",
+                NGAYDATHANG: "2021-01-02",
+                MAKHACHHANG: 2,
+            },
+            {
+                MATHE: 3,
+                NGAYLAP: "2021-01-03",
+                NGAYHETHAN: "2022-01-03",
+                DIEMTICHLUY: 300,
+                TRANGTHAI: 1,
+                LOAITHE: "Thẻ thường",
+                NGAYDATHANG: "2021-01-03",
+                MAKHACHHANG: 3,
+            },
+            {
+                MATHE: 4,
+                NGAYLAP: "2021-01-04",
+                NGAYHETHAN: "2022-01-04",
+                DIEMTICHLUY: 400,
+                TRANGTHAI: 1,
+                LOAITHE: "Thẻ thường",
+                NGAYDATHANG: "2021-01-04",
+                MAKHACHHANG: 4,
+            },
+        ]
+        res.render("staff/statistics/customerCard", { title: "Customer Card", cards, query, totalPages, currentPage, user, role });
+    }
+
+    async searchCustomerCard(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {query} = req.body;
+        const totalPages = 3;
+        const currentPage = parseInt(req.params.page) || 1;
+
+        const cards = [
+            {
+                MATHE: 1,
+                NGAYLAP: "2021-01-01",
+                NGAYHETHAN: "2022-01-01",
+                DIEMTICHLUY: 100,
+                TRANGTHAI: 1,
+                LOAITHE: "Thẻ thường",
+                NGAYDATHANG: "2021-01-01",
+                MAKHACHHANG: 1,
+            },
+            {
+                MATHE: 2,
+                NGAYLAP: "2021-01-02",
+                NGAYHETHAN: "2022-01-02",
+                DIEMTICHLUY: 200,
+                TRANGTHAI: 1,
+                LOAITHE: "Thẻ thường",
+                NGAYDATHANG: "2021-01-02",
+                MAKHACHHANG: 2,
+            },
+            {
+                MATHE: 3,
+                NGAYLAP: "2021-01-03",
+                NGAYHETHAN: "2022-01-03",
+                DIEMTICHLUY: 300,
+                TRANGTHAI: 1,
+                LOAITHE: "Thẻ thường",
+                NGAYDATHANG: "2021-01-03",
+                MAKHACHHANG: 3,
+            },
+        ]
+        res.render("staff/statistics/customerCard", { title: "Customer Card", cards, query, totalPages, currentPage, user, role });
+    }
+
+    async renderAddCustomerCard(req, res) {
+        let {email, role} = req;
+        const user = {};
+        res.render("staff/statistics/addCustomerCard", { title: "Add Customer Card", user, role });
+    }
+
+    async addCustomerCard(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {NGAYLAP, NGAYHETHAN, DIEMTICHLUY, TRANGTHAI, NGAYDATHANG, LOAITHE, MAKHACHHANG} = req.body;
+        console.log(NGAYLAP, NGAYHETHAN, DIEMTICHLUY, LOAITHE, MAKHACHHANG, TRANGTHAI, NGAYDATHANG);
+        res.redirect("/staff/customer-card/1");
     }
 }
 
