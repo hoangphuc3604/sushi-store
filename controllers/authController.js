@@ -35,6 +35,8 @@ class authControllers {
     
     if (user.role === "staff") {
       return res.redirect("/staff");
+    } else if (user.role === "admin") {
+      return res.redirect("/admin");
     } else {
       return res.redirect("/");
     }
