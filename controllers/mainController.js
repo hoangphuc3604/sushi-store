@@ -3,9 +3,14 @@ const KhachHang = require("../models/khachHangModel");
 
 class mainController {
     async loadMainPage (req, res) {
+
         const {email, role} = req;
         if (role === "staff") {
             res.redirect("/staff");
+            return;
+        }
+        if (role === "admin") {
+            res.redirect("/admin");
             return;
         }
         const user = await KhachHang.getKhachHangByEmail(email);
