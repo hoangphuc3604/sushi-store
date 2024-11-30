@@ -17,10 +17,14 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// Routes
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/", require("./routes/dataRoutes"));
 app.use("/booking", require("./routes/bookingRoutes"));
 app.use("/staff", require("./routes/staffRoutes"));
+app.use("/admin", require("./routes/adminRoutes"));
+
 
 app.listen(port, () => {
   console.log(`Server đang chạy tại http://localhost:${port}`);
