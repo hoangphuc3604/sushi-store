@@ -2,6 +2,7 @@ const KhachHang = require("../models/khachHangModel");
 const KhuVuc = require("../models/khuVucModel");
 const MonAn = require("../models/monAnModel");
 const NhanVien = require("../models/nhanVienModel");
+const ChiNhanh = require("../models/chiNhanhModel");
 const PER_PAGE = 8;
 
 class staffController {
@@ -240,27 +241,15 @@ class staffController {
     async renderEmployeeStatistics(req, res) {
         let {email, role} = req;
         const user = {};
-        const branches =[
-            {
-                id: 1,
-                name: "Chi nhánh 1",
-            },
-            {
-                id: 2,
-                name: "Chi nhánh 2",
-            },
-            {
-                id: 3,
-                name: "Chi nhánh 3",
-            },
-            {
-                id: 4,
-                name: "Chi nhánh 4",
-            },
-        ]
+        const allKhuVuc = await KhuVuc.getAll();
+        const chiNhanh = {};
+        for (const cur of allKhuVuc) {
+            const chiNhanhs = await KhuVuc.getChiNhanhByMaKhuVuc(cur.MAKHUVUC);
+            chiNhanh[cur.MAKHUVUC] = chiNhanhs.map(cn => cn);
+        }
         const employees = [];
 
-        res.render("staff/statistics/employee", { title: "Employee Statistics", branches, employees, user, role });
+        res.render("staff/statistics/employee", { title: "Employee Statistics", allKhuVuc, chiNhanh, employees, user, role });
     }
 
     async searhStaff(req, res) {
@@ -268,6 +257,14 @@ class staffController {
         const user = {};
         const {query, branch} = req.body;
         console.log(query, branch);
+
+        const allKhuVuc = await KhuVuc.getAll();
+        const chiNhanh = {};
+        for (const cur of allKhuVuc) {
+            const chiNhanhs = await KhuVuc.getChiNhanhByMaKhuVuc(cur.MAKHUVUC);
+            chiNhanh[cur.MAKHUVUC] = chiNhanhs.map(cn => cn);
+        }
+
         const employees = [
             {
                 id: 1,
@@ -280,25 +277,7 @@ class staffController {
                 salary: 10000000,
             },
         ]
-        const branches =[
-            {
-                id: 1,
-                name: "Chi nhánh 1",
-            },
-            {
-                id: 2,
-                name: "Chi nhánh 2",
-            },
-            {
-                id: 3,
-                name: "Chi nhánh 3",
-            },
-            {
-                id: 4,
-                name: "Chi nhánh 4",
-            },
-        ]
-        res.render("staff/statistics/employee", { title: "Employee Statistics", branches, employees, user, role });
+        res.render("staff/statistics/employee", { title: "Employee Statistics", allKhuVuc, chiNhanh, employees, user, role });
     }
 
     async renderInvoices(req, res) {
@@ -307,40 +286,7 @@ class staffController {
         const totalPages = 1;
         const currentPage = parseInt(req.params.page) || 1;
 
-        const invoices = [
-            {
-                maHoaDon: 1,
-                tongTien: 1000000,
-                soTienGiam: 0,
-                thanhTien: 1000000,
-                maPhieu: 1,
-                maChuongTrinh: 1,
-            },
-            {
-                maHoaDon: 2,
-                tongTien: 2000000,
-                soTienGiam: 0,
-                thanhTien: 2000000,
-                maPhieu: 2,
-                maChuongTrinh: 2,
-            },
-            {
-                maHoaDon: 3,
-                tongTien: 3000000,
-                soTienGiam: 0,
-                thanhTien: 3000000,
-                maPhieu: 3,
-                maChuongTrinh: 3,
-            },
-            {
-                maHoaDon: 4,
-                tongTien: 4000000,
-                soTienGiam: 0,
-                thanhTien: 4000000,
-                maPhieu: 4,
-                maChuongTrinh: 4,
-            }
-        ]
+        const invoices = [];
         res.render("staff/statistics/invoice", { title: "Invoices", invoices, totalPages, currentPage, user, role });
     }
 
@@ -348,7 +294,7 @@ class staffController {
         let {email, role} = req;
         const user = {};
         const {maKhachHang, ngayLap} = req.body;
-        const totalPages = 2; // sửa lại 1
+        const totalPages = 1; // sửa lại 1
         const currentPage = parseInt(req.params.page) || 1;
 
         const invoices = [
@@ -385,34 +331,9 @@ class staffController {
         const user = {};
         let ngayLap, maNhanVien, maKhachHang;
 
-        const totalPages = 2; // sửa lại 1
+        const totalPages = 1; // sửa lại 1
         const currentPage = parseInt(req.params.page) || 1;
-        const orders = [
-            {
-                maPhieu: 1,
-                ngayLap: "2021-01-01",
-                maNhanVien: 1,
-                maKhachHang: 1,
-            },
-            {
-                maPhieu: 2,
-                ngayLap: "2021-01-02",
-                maNhanVien: 2,
-                maKhachHang: 2,
-            },
-            {
-                maPhieu: 3,
-                ngayLap: "2021-01-03",
-                maNhanVien: 3,
-                maKhachHang: 3,
-            },
-            {
-                maPhieu: 4,
-                ngayLap: "2021-01-04",
-                maNhanVien: 4,
-                maKhachHang: 4,
-            },
-        ]
+        const orders = [];
         res.render("staff/statistics/order", { title: "Orders", orders, ngayLap, maNhanVien, maKhachHang, totalPages, currentPage, user, role });
     }
 
@@ -598,6 +519,41 @@ class staffController {
         console.log(NGAYLAP, NGAYHETHAN, DIEMTICHLUY, LOAITHE, MAKHACHHANG, TRANGTHAI, NGAYDATHANG);
         res.redirect("/staff/customer-card/1");
     }
+
+    async renderEditCustomerCard(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {id} = req.params;
+        const card = {
+            MATHE: 1,
+            NGAYLAP: "2021-01-01",
+            NGAYHETHAN: "2022-01-01",
+            DIEMTICHLUY: 100,
+            TRANGTHAI: 1,
+            LOAITHE: "Thẻ thường",
+            NGAYDATHANG: "2021-01-01",
+            MAKHACHHANG: 1,
+        }
+        res.render("staff/statistics/editCustomerCard", { title: "Edit Customer Card", card, user, role });
+    }
+
+    async editCustomerCard(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {id} = req.params;
+        const {NGAYLAP, NGAYHETHAN, DIEMTICHLUY, TRANGTHAI, NGAYDATHANG, LOAITHE, MAKHACHHANG} = req.body;
+        console.log(NGAYLAP, NGAYHETHAN, DIEMTICHLUY, LOAITHE, MAKHACHHANG, TRANGTHAI, NGAYDATHANG);
+        res.redirect("/staff/customer-card/1");
+    }
+
+    async deleteCustomerCard(req, res) {
+        let {email, role} = req;
+        const user = {};
+        const {id} = req.params;
+        console.log(id);
+        res.redirect("/staff/customer-card/1");
+    }
+
 }
 
  module.exports = new staffController();
