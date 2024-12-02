@@ -1,0 +1,106 @@
+<%- include('../partials/header') %>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <%- include('../partials/adminNavbar') %>
+
+        <div class="col-md-10 p-4">
+            <div class="container mt-4">
+                <h2 class="mb-4 text-center">Thống Kê Doanh Thu</h2>
+            
+                <form action="/admin/revenue" method="post" class="">
+                    <div class="row g-3 align-items-center mb-4">
+                        <div class="col-md-3">
+                            <label for="area" class="form-label">Khu Vực</label>
+                            <select class="form-select" id="area" name="area">
+                              <option value="" disabled selected>Chọn Khu Vực</option>
+                              <% for (let i = 0; i < areas.length; i++) { %>
+                                <option value="<%= areas[i].MAKHUVUC %>"><%= areas[i].TENKHUVUC %></option>
+                              <% } %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <!-- Chọn chi nhánh -->
+                            <label for="branch" class="form-label">Chi Nhánh</label>
+                            <select disabled class="form-select" id="branch" name="branch">
+                                <option value="all" selected>Tất Cả</option>
+                            </select>
+                        </div>
+                    </div>  
+                    
+                    <div class="row g-3 align-items-center mb-4">
+                        <div class="col-md-3">
+                            <label for="statType" class="form-label">Loại Thống Kê</label>
+                            <select class="form-select" id="statType" name="statType">
+                                <option value="day" selected>Theo Ngày</option>
+                                <option value="month">Theo Tháng</option>
+                                <option value="quarter">Theo Quý</option>
+                                <option value="year">Theo Năm</option>
+                            </select>
+                        </div>
+                
+                        <div class="col-md-3">
+                            <label for="startDate" class="form-label">Ngày Bắt Đầu</label>
+                            <input type="date" id="startDate" name="startDate" class="form-control" value="<%= startDate %>" />
+                        </div>
+                
+                        <div class="col-md-3">
+                            <label for="endDate" class="form-label">Ngày Kết Thúc</label>
+                            <input type="date" id="endDate" name="endDate" class="form-control" value="<%= endDate %>" />
+                        </div>
+                
+                        <div class="col-md-2">
+                            <label class="form-label d-block">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">Xem Thống Kê</button>
+                        </div>
+                    </div>
+                </form>
+            
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Thời Gian</th>
+                            <th>Tổng Doanh Thu (VNĐ)</th>
+                            <th>Số Lượng Đơn</th>
+                            <th>Ghi Chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let i = 0; i < revenueStats.length; i++) { %>
+                            <tr>
+                                <td><%= revenueStats[i].time %></td>
+                                <td><%= revenueStats[i].totalRevenue %></td>
+                                <td><%= revenueStats[i].orderCount %></td>
+                                <td><%= revenueStats[i].note %></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>                      
+        </div>
+    </div>
+</div>
+
+<script>
+    const areaSelect = document.getElementById('area');
+    const branchSelect = document.getElementById('branch');
+
+    areaSelect.addEventListener('change', (e) => {
+        branchSelect.disabled = false;
+
+        const branches = JSON.parse('<%- JSON.stringify(branches) %>');
+
+        const selectedArea = areaSelect.value;
+        branchSelect.innerHTML = `<option value="" disabled selected>Chọn chi nhánh...</option>`;
+        branches[selectedArea].forEach(branch => {
+            const option = document.createElement('option');
+            option.value = branch;
+            option.textContent = branch;
+            branchSelect.appendChild(option);
+        });
+    });
+</script>
+
+<%- include('../partials/footer') %>
