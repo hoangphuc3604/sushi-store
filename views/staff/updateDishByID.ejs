@@ -43,9 +43,9 @@
                         <div class="mb-3">
                             <label for="dishCategory" class="form-label">Phân Mục:</label>
                             <select class="form-select" id="dishCategory" name="MAPHANMUC">
-                                <option value="1" <%= monAn.MAPHANMUC === 1 ? 'selected' : '' %>>Phân mục 1</option>
-                                <option value="2" <%= monAn.MAPHANMUC === 2 ? 'selected' : '' %>>Phân mục 2</option>
-                                <option value="3" <%= monAn.MAPHANMUC === 3 ? 'selected' : '' %>>Phân mục 3</option>
+                                <% phanMuc.forEach(phanMuc => { %>
+                                    <option value="<%= phanMuc.MAPHANMUC %>" <%= phanMuc.MAPHANMUC === monAn.MAPHANMUC ? 'selected' : '' %>><%= phanMuc.TENPHANMUC %></option>
+                                <% }) %>
                             </select>
                         </div>
 

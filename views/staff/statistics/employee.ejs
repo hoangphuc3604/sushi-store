@@ -10,17 +10,23 @@
                 <h1 class="mb-4">Thống Kê Thông Tin Nhân Viên</h1>
                 
                 <form class="row g-3 align-items-center mb-4" method="POST" action="/staff/search">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="searchName" class="form-label">Tìm kiếm nhân viên</label>
                         <input type="text" class="form-control" id="searchName" name="query" placeholder="Nhập từ khóa">
                     </div>
-                    <div class="col-md-4">
-                        <label for="searchBranch" class="form-label">Chọn chi nhánh</label>
-                        <select class="form-select" id="searchBranch" name="branch">
+                    <div class="col-md-3">
+                        <label for="area" class="form-label">Chọn Khu Vực</label>
+                        <select class="form-select" id="area" name="area">
                             <option value="all">Tất cả</option>
-                            <% branches.forEach(branch => { %>
-                                <option value="<%= branch.id %>"><%= branch.name %></option>
+                            <% allKhuVuc.forEach(k => { %>
+                                <option value="<%= k.MAKHUVUC %>"><%= k.TENKHUVUC %></option>
                             <% }) %>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="branch" class="form-label">Chọn chi nhánh</label>
+                        <select disabled class="form-select" id="branch" name="branch">
+                            <option value="">Tất cả</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -69,5 +75,25 @@
         </div>
     </div>
 </div>
+
+<script>
+    const areaSelect = document.getElementById('area');
+    const branchSelect = document.getElementById('branch');
+
+    areaSelect.addEventListener('change', (e) => {
+        branchSelect.disabled = false;
+
+        const branches = JSON.parse('<%- JSON.stringify(chiNhanh) %>');
+
+        const selectedArea = areaSelect.value;
+        branchSelect.innerHTML = `<option value="" disabled selected>Chọn chi nhánh...</option>`;
+        branches[selectedArea].forEach(branch => {
+            const option = document.createElement('option');
+            option.value = branch.MACHINHANH;
+            option.textContent = branch.TENCHINHANH;
+            branchSelect.appendChild(option);
+        });
+    });
+</script>
 
 <%- include('../../partials/footer') %>
