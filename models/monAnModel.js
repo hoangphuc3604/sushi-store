@@ -8,6 +8,17 @@ class MonAn {
     return result.recordset;
   }
 
+  static async getMonAnByChiNhanh(maChiNhanh) {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("maChiNhanh", sql.VarChar, maChiNhanh)
+      .query(
+        "SELECT MONAN.MAMON, MONAN.TENMON TENMON, MONAN.GIA GIA, PHANMUC.TENPHANMUC PHANMUC, KHUVUC.TENKHUVUC KHUVUC, KHUVUC.MAKHUVUC MAKHUVUC FROM MONAN, PHANMUC, THUCDON, KHUVUC WHERE MONAN.MAPHANMUC = PHANMUC.MAPHANMUC AND PHANMUC.MATHUCDON = THUCDON.MATHUCDON AND THUCDON.MAKHUVUC = KHUVUC.MAKHUVUC AND KHUVUC.MAKHUVUC = @maChiNhanh"
+      );
+    return result.recordset;
+  }
+
   static async getMonAnByMaMonAn(maMonAn) {
     const pool = await poolPromise;
     const result = await pool
