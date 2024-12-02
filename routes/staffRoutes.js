@@ -47,9 +47,9 @@ router.get("/customer-card/add", authMiddleware(["staff"]), staffController.rend
 router.post("/customer-card/search", authMiddleware(["staff"]), staffController.searchCustomerCard)
 router.get("/customer-card/:page", authMiddleware(["staff"]), staffController.renderCustomerCard)
 router.post("/customer-card/add", authMiddleware(["staff"]), staffController.addCustomerCard)
-// router.get("/customer-card/edit/:id", authMiddleware(["staff"]), staffController.renderEditCustomerCard)
-// router.post("/customer-card/edit/:id", authMiddleware(["staff"]), staffController.editCustomerCard)
-// router.get("/customer-card/delete/:id", authMiddleware(["staff"]), staffController.deleteCustomerCard)
+router.get("/customer-card/edit/:id", authMiddleware(["staff"]), staffController.renderEditCustomerCard)
+router.post("/customer-card/edit/:id", authMiddleware(["staff"]), staffController.editCustomerCard)
+router.get("/customer-card/delete/:id", authMiddleware(["staff"]), staffController.deleteCustomerCard)
 
 
 module.exports = router;
