@@ -1,0 +1,158 @@
+<%- include('../partials/header') %>
+
+<div class="container-fluid">
+  <div class="row">
+    <%- include('../partials/adminNavbar') %>
+
+    <div class="col-md-10 p-4">
+      <div class="container mt-4">
+        <h2 class="mb-4 text-center">Chuyển Nhân Sự</h2>
+
+        <!-- Form tìm kiếm nhân viên -->
+        <form action="/admin/staff-search" method="POST" class="row g-3 align-items-center mb-4">
+          <div class="col-md-3">
+            <label for="area" class="form-label">Khu Vực</label>
+            <select class="form-select" id="area" name="area">
+              <option value="" disabled selected>Chọn Khu Vực</option>
+              <% for (let i = 0; i < areas.length; i++) { %>
+                <option value="<%= areas[i].MAKHUVUC %>"><%= areas[i].TENKHUVUC %></option>
+              <% } %>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label for="branch" class="form-label">Chi Nhánh</label>
+            <select class="form-select" id="branch" name="branch" disabled>
+              <option value="" disabled selected>Chọn Chi Nhánh</option>
+            </select>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label d-block">&nbsp;</label>
+            <button type="submit" class="btn btn-primary w-100">Tìm Kiếm</button>
+          </div>
+        </form>
+
+        <!-- Danh sách nhân viên -->
+        <% if (employees && employees.length > 0) { %>
+          <h4 class="text-center mt-4">Danh Sách Nhân Viên</h4>
+          <table class="table table-bordered mt-3">
+            <thead>
+              <tr>
+                <th>Mã NV</th>
+                <th>Họ Tên</th>
+                <th>Chức Vụ</th>
+                <th>Hành Động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% employees.forEach(employee => { %>
+                <tr>
+                  <td><%= employee.id %></td>
+                  <td><%= employee.name %></td>
+                  <td><%= employee.position %></td>
+                  <td>
+                    <button id="transferBtn" data-id="<%= employee.id %>" class="btn btn-success btn-sm ms-2">Chuyển chi nhánh</button>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } else if (employees) { %>
+          <p class="text-center text-muted mt-4">Không tìm thấy nhân viên nào</p>
+        <% } %>
+        
+        <div class="card mb-4 d-none">
+            <div class="card-body">
+                <form action="/admin/staff" method="post">
+                    <h5 class="card-title">Chuyển Nhân Viên</h5>
+                    <p><strong>Tên nhân viên: </strong><span id="empName"></span></p>
+                    <p><strong>Chức vụ: </strong><span id="position"></span></p>
+                    <input type="number" id="empId" name="id" hidden>
+                    <div class="container">
+                        <div class="col-md-3">
+                            <label for="new-area" class="form-label">Khu Vực Mới</label>
+                            <select class="form-select" id="new-area" name="area">
+                            <option value="" disabled selected>Chọn Khu Vực</option>
+                            <% for (let i = 0; i < areas.length; i++) { %>
+                                <option value="<%= areas[i].MAKHUVUC %>"><%= areas[i].TENKHUVUC %></option>
+                            <% } %>
+                            </select>
+                        </div>
+                
+                        <div class="col-md-3">
+                            <label for="new-branch" class="form-label">Chi Nhánh Mới</label>
+                            <select class="form-select" id="new-branch" name="branch" disabled>
+                            <option value="" disabled selected>Chọn Chi Nhánh</option>
+                            </select>
+                        </div>
+                
+                        <div class="col-md-2">
+                            <label class="form-label d-block">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">Chuyển</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>      
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    const areaSelect = document.getElementById('area');
+    const branchSelect = document.getElementById('branch');
+    const transferBtns = document.querySelectorAll('#transferBtn');
+
+    areaSelect.addEventListener('change', () => {
+        branchSelect.disabled = false;
+
+        const branches = JSON.parse('<%- JSON.stringify(branches) %>');
+
+        const selectedArea = areaSelect.value;
+        branchSelect.innerHTML = `<option value="" disabled selected>Chọn chi nhánh...</option>`;
+        branches[selectedArea].forEach(branch => {
+            const option = document.createElement('option');
+            option.value = branch;
+            option.textContent = branch;
+            branchSelect.appendChild(option);
+        });
+    });
+
+    const newAreaSelect = document.getElementById('new-area');
+    const newBranchSelect = document.getElementById('new-branch');
+
+    newAreaSelect.addEventListener('change', () => {
+        newBranchSelect.disabled = false;
+
+        const branches = JSON.parse('<%- JSON.stringify(branches) %>');
+
+        const selectedArea = newAreaSelect.value;
+        newBranchSelect.innerHTML = `<option value="" disabled selected>Chọn chi nhánh...</option>`;
+        branches[selectedArea].forEach(branch => {
+            const option = document.createElement('option');
+            option.value = branch;
+            option.textContent = branch;
+            newBranchSelect.appendChild(option);
+        });
+    });
+
+    const employees = JSON.parse('<%- JSON.stringify(employees) %>');
+
+    transferBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = parseInt(btn.getAttribute('data-id'));
+            const employee = employees.find(emp => emp.id === id);
+            console.log(employee);
+
+            document.getElementById('empName').textContent = employee.name;
+            document.getElementById('position').textContent = employee.position;
+            document.getElementById('empId').value = employee.id;
+
+            document.querySelector('.card').classList.remove('d-none');
+        });
+    });
+</script>
+
+<%- include('../partials/footer') %>
