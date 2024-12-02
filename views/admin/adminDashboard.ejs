@@ -3,58 +3,47 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <aside class="col-md-2 sidebar bg-light p-3">
-            <nav class="nav flex-column">
-                <a class="nav-link active" href="/admin/dashboard">
-                    <i class="fas fa-home me-2"></i> Dashboard
-                </a>
-                <a class="nav-link" href="/admin/revenue">
-                    <i class="fas fa-chart-line me-2"></i> Thống kê doanh thu
-                </a>
-                <a class="nav-link" href="/admin/menu-stats">
-                    <i class="fas fa-utensils me-2"></i> Thống kê món ăn
-                </a>
-                <a class="nav-link" href="/admin/staff">
-                    <i class="fas fa-user-tie me-2"></i> Quản lý nhân sự
-                </a>
-                <a class="nav-link" href="/admin/employee-salary">
-                    <i class="fas fa-money-bill-wave me-2"></i> Cập nhật lương
-                </a>
-                <a class="nav-link" href="/admin/settings">
-                    <i class="fas fa-cogs me-2"></i> Cài đặt
-                </a>
-            </nav>
-        </aside>
+        <%- include('../partials/adminNavbar') %>
 
         <!-- Main Content -->
         <main class="col-md-10 p-4">
-            <div class="container">
-                <h1 class="mb-4">Dashboard Quản Trị</h1>
-
-                <!-- Revenue Statistics -->
-                <section class="mb-4">
-                    <h2 class="mb-3">Thống kê doanh thu</h2>
-                    <a href="/admin/revenue" class="btn btn-primary">Xem chi tiết</a>
-                </section>
-
-                <!-- Menu Statistics -->
-                <section class="mb-4">
-                    <h2 class="mb-3">Thống kê món ăn</h2>
-                    <a href="/admin/menu-stats" class="btn btn-success">Xem chi tiết</a>
-                </section>
-
-                <!-- Staff Management -->
-                <section class="mb-4">
-                    <h2 class="mb-3">Quản lý nhân sự</h2>
-                    <a href="/admin/staff" class="btn btn-warning">Quản lý nhân sự</a>
-                    <a href="/admin/employee-salary" class="btn btn-info">Cập nhật lương</a>
-                </section>
-
-                <!-- Settings -->
-                <section>
-                    <h2 class="mb-3">Cài đặt</h2>
-                    <a href="/admin/settings" class="btn btn-secondary">Cấu hình hệ thống</a>
-                </section>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-chart-line me-2"></i>Doanh Thu</h5>
+                            <p class="card-text">Xem doanh thu theo từng chi nhánh.</p>
+                            <a class="btn btn-orange" href="/admin/revenue">Xem Ngay</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-utensils me-2"></i> Món Ăn</h5>
+                            <p class="card-text">Xem doanh thu theo từng món ăn.</p>
+                            <a class="btn btn-orange" href="/admin/menu-stats">Xem Ngay</a>
+                        </div>
+                    </div>
+                </div> 
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-user-tie me-2"></i> Nhân Sự</h5>
+                            <p class="card-text">Chuyển nhân sự giữa các chi nhánh.</p>
+                            <a class="btn btn-orange" href="/admin/staff">Xem Ngay</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-info-circle me-2"></i> Thông Tin</h5>
+                            <p class="card-text">Chỉnh sửa thông tin nhân sự.</p>
+                            <a class="btn btn-orange" href="/admin/info">Xem Ngay</a>
+                        </div>
+                    </div>
+                </div> 
             </div>
         </main>
     </div>
