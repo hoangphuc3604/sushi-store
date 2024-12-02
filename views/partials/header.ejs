@@ -16,10 +16,12 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
       <div class="container">
-        <a href="/" class="navbar-brand">
-          <img src="/images/logo.jpg" alt="Logo" class="logo">
-        </a>
-        <a class="navbar-brand fw-bold" href="/" style="color: orangered;">SuShiX</a>
+        <div class="logo-container">
+          <a href="/" class="navbar-brand">
+            <img src="/images/logo.jpg" alt="Logo" class="logo">
+          </a>
+          <a class="navbar-brand fw-bold" href="/" id="brand-name" style="color: orangered;">SuShiX</a>
+        </div>
 
         <!-- Thanh tìm kiếm ở giữa -->
         <form class="d-flex search-form" action="<%= role === 'customer' ? '/search' : '/staff/dish-search/1 ' %>" method="POST">
@@ -35,7 +37,8 @@
           </button>
         </form>
 
-        <button
+        <% if (role === "customer") { %>
+          <button
           class="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
@@ -43,6 +46,7 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
+        <% } %>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <% if (role === "customer") { %>
@@ -61,17 +65,17 @@
             <% } %>
             <li>
               <div class="position-absolute top-0 end-0 p-3">
-                <div class="dropdown">
-                  <img
+                <img
                     src="/images/avatar.jpg"
-                    class="rounded-circle"
+                    class="rounded-circle avatar"
                     width="30"
                     height="30"
                     alt="Avatar"
                     id="userMenu"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
-                  />
+                />
+                <div class="dropdown">
                   <ul
                     class="dropdown-menu dropdown-menu-end"
                     aria-labelledby="userMenu"
@@ -96,7 +100,7 @@
               </div>
             </li>
             <% if (role === 'customer') { %>
-              <li style="margin-left: 10px;">
+              <li id="cart-btn">
                 <a href="/booking/cart/<%= user.MAKHACHHANG %>" class="btn btn-outline-danger">
                   <i class="fa-solid fa-cart-shopping"></i>
                 </a>
