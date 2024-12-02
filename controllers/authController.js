@@ -4,12 +4,14 @@ const KhachHang = require("../models/khachHangModel");
 const { createToken } = require("../utils/tokenCreator");
 
 class authControllers {
+  // [GET] /auth/login
   async getUserLogin(req, res) {
     const error = req.cookies.error;
     res.clearCookie("error");
     res.render("auth/login", { title: "Login", error });
   }
 
+  // [POST] /auth/login
   async postUserLogin(req, res) {
     const { email, password } = req.body;
     const user = await User.getUserByEmail(email);
@@ -42,17 +44,20 @@ class authControllers {
     }
   }
 
+  // [GET] /auth/logout
   async logout(req, res) {
     res.clearCookie("accessToken");
     res.redirect("/");
   }
 
+  // [GET] /auth/register
   async register(req, res) {
     const error = req.cookies.error;
     res.clearCookie("error");
     res.render("auth/register", { title: "Register", error });
   }
 
+  // [POST] /auth/register
   async postRegister(req, res) {
     const { email, password, name, image, cccd, phone, gender} = req.body;
     const checkUser = await User.getUserByEmail(email);

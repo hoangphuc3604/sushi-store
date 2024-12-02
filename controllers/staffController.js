@@ -1,15 +1,18 @@
 const KhachHang = require("../models/khachHangModel");
 const KhuVuc = require("../models/khuVucModel");
 const MonAn = require("../models/monAnModel");
+const NhanVien = require("../models/nhanVienModel");
 const PER_PAGE = 8;
 
 class staffController {
+    // [GET] /staff
     async loadMainPage(req, res) {
         let {email, role} = req;
         const user = {MAKHACHHANG: 1};
         res.render("staff/staffDashboard", { title: "Dashboard", user, role });
     }
 
+    // [GET] /staff/add-dish
     async addDish(req, res) {
         let {email, role} = req;
         const user = {MAKHACHHANG: 1};
@@ -20,12 +23,16 @@ class staffController {
             const phanMucs = await KhuVuc.getAllPhanMucByMaKhuVuc(cur.MAKHUVUC);
             phanMuc[cur.MAKHUVUC] = phanMucs;
         }
+
+        res.render("staff/addDish", { title: "Add Dish", user, role, allKhuVuc, phanMuc });
     }
 
+    // [POST] /staff/add-dish
     async postAddDish(req, res) {
         
     }
 
+    // [GET] /staff/update-dish
     async updateDish(req, res) {
         let {email, role} = req;
         const user = {};
@@ -33,25 +40,21 @@ class staffController {
             {
                 MAMON: 1,
                 TENMON: "Sushi cá hồi",
-                TRANGTHAI: 1,
                 GIA: 100000,
             },
             {
                 MAMON: 2,
                 TENMON: "Sushi cá thu",
-                TRANGTHAI: 1,
                 GIA: 200000,
             },
             {
                 MAMON: 3,
                 TENMON: "Sushi cá trích",
-                TRANGTHAI: 1,
                 GIA: 200000,
             },
             {
                 MAMON: 4,
                 TENMON: "Sushi cá basa",
-                TRANGTHAI: 0, 
                 GIA: 200000,
             },
         ]
@@ -62,14 +65,9 @@ class staffController {
         let {email, role} = req;
         const user = {};
         const {id} = req.params;
-        const monAn = {
-            MAMON: 1,
-            TENMON: "Sushi cá hồi",
-            TRANGTHAIPHUCVU: 1,
-            GIA: 100000,
-            MAPHANMUC: 1,
-        }
-        res.render("staff/updateDishByID", { title: "Update Dish", user, role, monAn });
+        const monAn = await MonAn.getMonAnByMaMonAn(id);
+        const phanMuc = await KhuVuc.getAllPhanMucByMaKhuVuc(monAn.MAKHUVUC);
+        res.render("staff/updateDishByID", { title: "Update Dish", user, role, monAn, phanMuc });
     }
 
     async updateDishWithId(req, res) {
@@ -78,7 +76,7 @@ class staffController {
         const {id} = req.params;
         const {TENMON, GIA, MAPHANMUC, TRANGTHAIPHUCVU} = req.body;
 
-
+        await MonAn.updateMonAn(id, {tenMonAn: TENMON, gia: GIA, maPhanMuc: MAPHANMUC, trangThaiPhucVu: TRANGTHAIPHUCVU});
 
         res.redirect("/staff/update-dish");
     }
@@ -121,13 +119,17 @@ class staffController {
                 GIA: 200000,
             },
         ]
+        // const allMonAn = MonAn.getMonAnByChiNhanh(user.MACHINHANH);
         res.render("staff/dishBooking", { title: "Booking", user, role, allMonAn });
     }
 
     async booking(req, res) {
         let {email, role} = req;
         const user = {};
-        console.log(req.body);
+        const {table, name, cccd, gender, phone, memberCard, total, dishes} = req.body;
+        const cusEmail = req.body.email;
+
+        //
     }
 
     async renderRevenueStatistics(req, res) {
