@@ -7,36 +7,36 @@
         <%- include('../partials/staffNavbar') %>
 
         <!-- Main Content -->
-        <div class="col-md-10 p-4">
+        <div class="col-md-12 p-4">
             <h1 class="text-center mb-4">Chỉnh Sửa Thông Tin Món Ăn</h1>
             <div class="card">
                 <div class="card-body">
-                    <form id="editDishForm" action="/staff/update-dish/<%= monAn.MAMON %>" method="POST">
+                    <form id="editDishForm" action="/staff/update-dish/<%= monAn.MaMon %>" method="POST">
                         <!-- Mã Món Ăn (Không chỉnh sửa) -->
                         <div class="mb-3">
                             <label for="dishId" class="form-label">Mã Món Ăn:</label>
-                            <input type="text" class="form-control" id="dishId" value="<%= monAn.MAMON %>" readonly>
+                            <input type="text" class="form-control" id="dishId" value="<%= monAn.MaMon %>" readonly>
                         </div>
 
                         <!-- Tên Món Ăn -->
                         <div class="mb-3">
                             <label for="dishName" class="form-label">Tên Món Ăn:</label>
-                            <input type="text" class="form-control" id="dishName" name="TENMON" value="<%= monAn.TENMON %>" required>
+                            <input type="text" class="form-control" id="dishName" name="TENMON" value="<%= monAn.TenMonAn %>" required>
                         </div>
 
                         <!-- Trạng Thái Phục Vụ -->
                         <div class="mb-3">
                             <label for="dishStatus" class="form-label">Trạng Thái Phục Vụ:</label>
                             <select class="form-select" id="dishStatus" name="TRANGTHAIPHUCVU">
-                                <option value="1" <%= monAn.TRANGTHAIPHUCVU === 1 ? 'selected' : '' %>>Phục vụ</option>
-                                <option value="0" <%= monAn.TRANGTHAIPHUCVU === 0 ? 'selected' : '' %>>Ngừng phục vụ</option>
+                                <option value="1" <%= monAn.TrangThaiPhucVu === 1 ? 'selected' : '' %>>Phục vụ</option>
+                                <option value="0" <%= monAn.TrangThaiPhucVu === 0 ? 'selected' : '' %>>Ngừng phục vụ</option>
                             </select>
                         </div>
 
                         <!-- Giá -->
                         <div class="mb-3">
                             <label for="dishPrice" class="form-label">Giá (VND):</label>
-                            <input type="number" class="form-control" id="dishPrice" name="GIA" value="<%= monAn.GIA %>" required>
+                            <input type="number" class="form-control" id="dishPrice" name="GIA" value="<%= monAn.Gia %>" required>
                         </div>
 
                         <!-- Phân Mục -->
@@ -44,7 +44,7 @@
                             <label for="dishCategory" class="form-label">Phân Mục:</label>
                             <select class="form-select" id="dishCategory" name="MAPHANMUC">
                                 <% phanMuc.forEach(phanMuc => { %>
-                                    <option value="<%= phanMuc.MAPHANMUC %>" <%= phanMuc.MAPHANMUC === monAn.MAPHANMUC ? 'selected' : '' %>><%= phanMuc.TENPHANMUC %></option>
+                                    <option value="<%= phanMuc.MaPhanMuc %>" <%= phanMuc.MaPhanMuc === monAn.MaPhanMuc ? 'selected' : '' %>><%= phanMuc.TenPhanMuc %></option>
                                 <% }) %>
                             </select>
                         </div>

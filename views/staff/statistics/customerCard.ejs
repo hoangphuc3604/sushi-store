@@ -5,7 +5,7 @@
 
         <%- include('../../partials/staffNavbar') %>
 
-        <div class="col-md-10 p-4">
+        <div class="col-md-12 p-4">
             <div class="container mt-4">
                 <h1 class="mb-4">Thống Kê Thẻ Khách Hàng</h1>
                 
@@ -36,7 +36,6 @@
                                 <th>Điểm Tích Luỹ</th>
                                 <th>Trạng Thái</th>
                                 <th>Loại Thẻ</th>
-                                <th>Ngày Đặt Hàng</th>
                                 <th>Mã Khách Hàng</th>
                                 <th>Hành Động</th>
                             </tr>
@@ -45,17 +44,16 @@
                             <% if (cards.length > 0) { %>
                                 <% cards.forEach(card => { %>
                                     <tr>
-                                        <td><%= card.MATHE %></td>
-                                        <td><%= card.NGAYLAP %></td>
-                                        <td><%= card.NGAYHETHAN %></td>
-                                        <td><%= card.DIEMTICHLUY %></td>
-                                        <td><%= card.TRANGTHAI === 1 ? 'Hoạt động' : 'Đã khóa' %></td>
-                                        <td><%= card.LOAITHE %></td>
-                                        <td><%= card.NGAYDATHANG %></td>
-                                        <td><%= card.MAKHACHHANG %></td>
+                                        <td><%= card.MaThe %></td>
+                                        <td><%= card.NgayLap %></td>
+                                        <td><%= card.NgayHetHan %></td>
+                                        <td><%= card.DiemTichLuy %></td>
+                                        <td><%= card.TrangThai %></td>
+                                        <td><%= card.LoaiThe %></td>
+                                        <td><%= card.MaKhachHang %></td>
                                         <td>
-                                            <a href="/customer-card/edit/<%= card.MATHE %>" class="btn btn-sm btn-warning my-1">Sửa</a>
-                                            <form method="POST" action="/customer-card/delete/<%= card.MATHE %>" class="d-inline">
+                                            <a href="/staff/customer-card/edit/<%= card.MaThe %>" class="btn btn-sm btn-warning my-1">Sửa</a>
+                                            <form method="POST" action="/staff/customer-card/delete/<%= card.MaThe %>" class="d-inline">
                                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xoá thẻ này?')">Xóa</button>
                                             </form>
                                         </td>

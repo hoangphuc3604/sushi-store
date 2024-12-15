@@ -5,7 +5,7 @@
 
         <%- include('../../partials/staffNavbar') %>
 
-        <div class="col-md-10 p-4">
+        <div class="col-md-12 p-4">
             <div class="container mt-4">
                 <h1 class="mb-4">Thống Kê Thông Tin Nhân Viên</h1>
                 
@@ -19,7 +19,7 @@
                         <select class="form-select" id="area" name="area">
                             <option value="all">Tất cả</option>
                             <% allKhuVuc.forEach(k => { %>
-                                <option value="<%= k.MAKHUVUC %>"><%= k.TENKHUVUC %></option>
+                                <option value="<%= k.MaKhuVuc %>"><%= k.TenKhuVuc %></option>
                             <% }) %>
                         </select>
                     </div>
@@ -53,14 +53,14 @@
                             <% if (employees.length > 0) { %>
                                 <% employees.forEach(employee => { %>
                                     <tr>
-                                        <td><%= employee.id %></td>
-                                        <td><%= employee.name %></td>
-                                        <td><%= employee.branchName %></td>
-                                        <td><%= employee.gender %></td>
-                                        <td><%= employee.phone %></td>
-                                        <td><%= employee.address %></td>
-                                        <td><%= employee.startDate %></td>
-                                        <td><%= employee.salary %></td>
+                                        <td><%= employee.MaNhanVien %></td>
+                                        <td><%= employee.HoTen %></td>
+                                        <td><%= employee.MaChiNhanh %></td>
+                                        <td><%= employee.GioiTinh %></td>
+                                        <td><%= employee.SoDienThoai %></td>
+                                        <td><%= employee.DiaChi %></td>
+                                        <td><%= employee.NgayVaoLam %></td>
+                                        <td><%= employee.Luong %></td>
                                     </tr>
                                 <% }) %>
                             <% } else { %>
@@ -89,8 +89,8 @@
         branchSelect.innerHTML = `<option value="" disabled selected>Chọn chi nhánh...</option>`;
         branches[selectedArea].forEach(branch => {
             const option = document.createElement('option');
-            option.value = branch.MACHINHANH;
-            option.textContent = branch.TENCHINHANH;
+            option.value = branch.MaChiNhanh;
+            option.textContent = branch.TenChiNhanh;
             branchSelect.appendChild(option);
         });
     });

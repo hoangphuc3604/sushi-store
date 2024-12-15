@@ -1,58 +1,55 @@
-<%- include('../partials/header') %>
+<%- include('../../partials/header') %>
 
 <div class="container-fluid">
   <div class="row">
-    <%- include('../partials/adminNavbar') %>
+    <%- include('../../partials/staffNavbar') %>
 
-    <div class="col-md-10 p-4">
+    <div class="col-md-12 p-4">
       <div class="container mt-4">
         <h2 class="mb-4 text-center">Chỉnh Sửa Thông Tin Thẻ Khách Hàng</h2>
-        <form action="/admin/edit-customer-card/<%= customerCard.MATHE %>" method="POST">
+        <form action="/admin/edit-customer-card/<%= customerCard.MaThe %>" method="POST">
           <div class="row g-3">
             <div class="col-md-6">
               <label for="MATHE" class="form-label">Mã Thẻ</label>
-              <input type="text" id="MATHE" name="MATHE" class="form-control" value="<%= customerCard.MATHE %>" readonly />
+              <input type="text" id="MATHE" name="MATHE" class="form-control" value="<%= customerCard.MaThe %>" readonly />
             </div>
 
             <div class="col-md-6">
               <label for="NGAYLAP" class="form-label">Ngày Lập</label>
-              <input type="date" id="NGAYLAP" name="NGAYLAP" class="form-control" value="<%= customerCard.NGAYLAP %>" />
+              <input type="date" id="NGAYLAP" name="NGAYLAP" class="form-control" value="<%= customerCard.NgayLap %>" />
             </div>
 
             <div class="col-md-6">
               <label for="NGAYHETHAN" class="form-label">Ngày Hết Hạn</label>
-              <input type="date" id="NGAYHETHAN" name="NGAYHETHAN" class="form-control" value="<%= customerCard.NGAYHETHAN %>" />
+              <input type="date" id="NGAYHETHAN" name="NGAYHETHAN" class="form-control" value="<%= customerCard.NgayHetHan %>" />
             </div>
 
             <div class="col-md-6">
               <label for="DIEMTICHLUY" class="form-label">Điểm Tích Lũy</label>
-              <input type="number" id="DIEMTICHLUY" name="DIEMTICHLUY" class="form-control" value="<%= customerCard.DIEMTICHLUY %>" />
+              <input type="number" id="DIEMTICHLUY" name="DIEMTICHLUY" class="form-control" value="<%= customerCard.DiemTichLuy %>" />
             </div>
 
             <div class="col-md-6">
               <label for="TRANGTHAI" class="form-label">Trạng Thái</label>
               <select id="TRANGTHAI" name="TRANGTHAI" class="form-select">
-                <option value="active" <%= customerCard.TRANGTHAI === 'active' ? 'selected' : '' %>>Hoạt Động</option>
-                <option value="inactive" <%= customerCard.TRANGTHAI === 'inactive' ? 'selected' : '' %>>Không Hoạt Động</option>
+                <option value="1" <%= customerCard.TrangThai === "Hoạt động" ? "selected" : "" %>>Hoạt động</option>
+                <option value="0" <%= customerCard.TrangThai !== "Hoạt động" ? "selected" : "" %>>Đã khóa</option>
               </select>
             </div>
 
             <div class="col-md-6">
               <label for="LOAITHE" class="form-label">Loại Thẻ</label>
               <select id="LOAITHE" name="LOAITHE" class="form-select">
-                <option value="standard" <%= customerCard.LOAITHE === 'standard' ? 'selected' : '' %>>Thẻ Thường</option>
-                <option value="premium" <%= customerCard.LOAITHE === 'premium' ? 'selected' : '' %>>Thẻ Cao Cấp</option>
+                <option value="Membershio" <%= customerCard.LoaiThe === 'Membershio' ? 'selected' : '' %>>Thẻ Thường</option>
+                <option value="Cooper" <%= customerCard.LoaiThe === 'Cooper' ? 'selected' : '' %>>Thẻ Đồng</option>
+                <option value="Silver" <%= customerCard.LoaiThe === 'Silver' ? 'selected' : '' %>>Thẻ Bạc</option>
+                <option value="Gold" <%= customerCard.LoaiThe === 'Gold' ? 'selected' : '' %>>Thẻ Vàng</option>
               </select>
             </div>
 
             <div class="col-md-6">
-              <label for="NGAYDATHANG" class="form-label">Ngày Đặt Hàng</label>
-              <input type="date" id="NGAYDATHANG" name="NGAYDATHANG" class="form-control" value="<%= customerCard.NGAYDATHANG %>" />
-            </div>
-
-            <div class="col-md-6">
               <label for="MAKHACHHANG" class="form-label">Mã Khách Hàng</label>
-              <input type="text" id="MAKHACHHANG" name="MAKHACHHANG" class="form-control" value="<%= customerCard.MAKHACHHANG %>" />
+              <input type="text" id="MAKHACHHANG" name="MAKHACHHANG" class="form-control" value="<%= customerCard.MaKhachHang %>" />
             </div>
           </div>
 
@@ -70,4 +67,5 @@
   </div>
 </div>
 
-<%- include('../partials/footer') %>
+<%- include('../../partials/footer') %>
+

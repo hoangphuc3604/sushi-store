@@ -14,5 +14,6 @@ router.get("/info", authMiddleware(["admin"]), adminController.info);
 router.post("/info", authMiddleware(["admin"]), adminController.getInfoList);
 router.get("/info/:id", authMiddleware(["admin"]), adminController.getInfoDetail);
 router.post("/info/:id", authMiddleware(["admin"]), adminController.updateInfo);
+router.get("/info/delete/:id", authMiddleware(["admin"]), adminController.deleteInfo);
 
 module.exports = router;

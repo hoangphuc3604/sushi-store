@@ -4,7 +4,7 @@
   <div class="row">
     <%- include('../partials/adminNavbar') %>
 
-    <div class="col-md-10 p-4">
+    <div class="col-md-12 p-4">
       <div class="container mt-4">
         <h2 class="mb-4 text-center">Chuyển Nhân Sự</h2>
 
@@ -15,7 +15,7 @@
             <select class="form-select" id="area" name="area">
               <option value="" disabled selected>Chọn Khu Vực</option>
               <% for (let i = 0; i < areas.length; i++) { %>
-                <option value="<%= areas[i].MAKHUVUC %>"><%= areas[i].TENKHUVUC %></option>
+                <option value="<%= areas[i].MaKhuVuc %>"><%= areas[i].TenKhuVuc %></option>
               <% } %>
             </select>
           </div>
@@ -75,7 +75,7 @@
                             <select class="form-select" id="new-area" name="area">
                             <option value="" disabled selected>Chọn Khu Vực</option>
                             <% for (let i = 0; i < areas.length; i++) { %>
-                                <option value="<%= areas[i].MAKHUVUC %>"><%= areas[i].TENKHUVUC %></option>
+                                <option value="<%= areas[i].MaKhuVuc %>"><%= areas[i].TenKhuVuc %></option>
                             <% } %>
                             </select>
                         </div>

@@ -7,13 +7,13 @@ const PER_PAGE = 8;
 class bookingController {
     async getTableBooking(req, res) {
         const {email, role} = req;
-        const allKhuVuc = await KhuVuc.getAll();
-        const user = await KhachHang.getKhachHangByEmail(email);
+        const allKhuVuc = await KhuVuc.all();
+        const user = await KhachHang.one(email);
 
         const chiNhanh = {};
         for (const cur of allKhuVuc) {
-            const chiNhanhs = await KhuVuc.getChiNhanhByMaKhuVuc(cur.MAKHUVUC);
-            chiNhanh[cur.MAKHUVUC] = chiNhanhs.map(cn => cn.TENCHINHANH);
+            const chiNhanhs = await KhuVuc.chiNhanhs(cur.MaKhuVuc);
+            chiNhanh[cur.MaKhuVuc] = chiNhanhs.map(cn => cn.TenChiNhanh);
         }
 
         res.render("booking/tableBooking", { role, user, chiNhanh, allKhuVuc, title: "Đặt Bàn" });
@@ -28,8 +28,8 @@ class bookingController {
         const currentPage = parseInt(req.params.page) || 1;
         const allMonAn = await MonAn.getMonAnByIndex((currentPage - 1) * PER_PAGE);
         const length = await MonAn.getTableLength();
-        const allKhuVuc = await KhuVuc.getAll();
-        const user = await KhachHang.getKhachHangByEmail(email);
+        const allKhuVuc = await KhuVuc.all();
+        const user = await KhachHang.one(email);
         const totalPages = Math.ceil(length / PER_PAGE);
         res.render("booking/foodBooking", { user, allMonAn, allKhuVuc, currentPage, totalPages, role, title: "Đặt Món" });
     }
@@ -44,10 +44,14 @@ class bookingController {
     async getCart(req, res) {
         const {email, role} = req;
         const {id} = req.params;
-        const user = await KhachHang.getKhachHangByEmail(email);
-        const gioHang = await GioHang.getGioHangByMaKhachHang(parseInt(id));
+        const user = await KhachHang.one(email);
+        let gioHang = await GioHang.getGioHangByMaKhachHang(id);
+        gioHang = await Promise.all(gioHang.map(async cur => {
+            const monAn = await MonAn.one(cur.MaMon);
+            return {...cur, ...monAn};
+        }));
         const soLuong = gioHang.length;
-        const tongTien = gioHang.reduce((acc, cur) => acc + cur.GIA * cur.SOLUONG, 0);
+        const tongTien = gioHang.reduce((acc, cur) => acc + cur.Gia * cur.SoLuong, 0);
         res.render("booking/cart", { gioHang, soLuong, tongTien, user, role, title: "Giỏ Hàng" });
     }
 

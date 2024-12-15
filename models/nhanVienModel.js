@@ -1,73 +1,80 @@
 const { sql, poolPromise } = require("../utils/db");
+const { id_creator } = require("../utils/idCreator");
 
 class NhanVien {
-  static async getAll() {
+  static async all() {
     const pool = await poolPromise;
-    const result = await pool.request().query("SELECT * FROM NHANVIEN");
+    const result = await pool.request().query("SELECT * FROM NHAN_VIEN");
     return result.recordset;
   }
 
-  static async getNhanVienByMaNhanVien(maNhanVien) {
+  static async one(maNhanVien) {
     const pool = await poolPromise;
     const result = await pool
       .request()
       .input("maNhanVien", sql.VarChar, maNhanVien)
-      .query("SELECT * FROM NHANVIEN WHERE MANHANVIEN = @maNhanVien");
+      .query("SELECT * FROM NHAN_VIEN WHERE MaNhanVien = @maNhanVien");
 
     return result.recordset[0];
   }
 
-  static async createNhanVien(nhanVien) {
+  static async add(nhanVien) {
     const pool = await poolPromise;
 
     await pool
       .request()
-      .input("maNhanVien", sql.VarChar, nhanVien.maNhanVien)
-      .input("hoTen", sql.NVarChar, nhanVien.hoTen)
-      .input("ngaySinh", sql.Date, nhanVien.ngaySinh)
-      .input("gioiTinh", sql.VarChar, nhanVien.gioiTinh)
-      .input("diaChi", sql.NVarChar, nhanVien.diaChi)
-      .input("soDienThoai", sql.VarChar, nhanVien.soDienThoai);
-    input("ngayVaoLam", sql.Date, nhanVien.ngayVaoLam)
-      .input("ngayNghiViec", sql.Date, nhanVien.ngayNghiViec)
-      .input("luong", sql.Decimal, nhanVien.luong)
+      .input("maNhanVien", sql.VarChar, id_creator("NV"))
+      .input("tenNhanVien", sql.NVarChar, nhanVien.hoTen)
       .input("maBoPhan", sql.VarChar, nhanVien.maBoPhan)
-      .input("maChiNhanh", sql.VarChar, nhanVien.maChiNhanh)
-      .query(
-        "INSERT INTO NHANVIEN (MANHANVIEN, HOTEN, NGAYSINH, GIOITINH, DIACHI, SODIENTHOAI, NGAYVAOLAM, NGAYNGHIVIEC, LUONG, MABOPHAN, MACHINHANH) VALUES (@maNhanVien, @hoTen, @ngaySinh, @gioiTinh, @diaChi, @soDienThoai, @ngayVaoLam, @ngayNghiViec, @luong, @maBoPhan, @maChiNhanh)"
-      );
+      .execute("sp_ThemNhanVien");
 
-    return await this.getNhanVienByMaNhanVien(nhanVien.maNhanVien);
+    return await this.one(nhanVien.maNhanVien);
   }
 
-  static async updateNhanVien(maNhanVien, nhanVien) {
+  static async update(maNhanVien, nhanVien) {
     const pool = await poolPromise;
     await pool
       .request()
       .input("maNhanVien", sql.VarChar, maNhanVien)
-      .input("hoTen", sql.NVarChar, nhanVien.hoTen)
-      .input("ngaySinh", sql.Date, nhanVien.ngaySinh)
-      .input("gioiTinh", sql.VarChar, nhanVien.gioiTinh)
-      .input("diaChi", sql.NVarChar, nhanVien.diaChi)
-      .input("soDienThoai", sql.VarChar, nhanVien.soDienThoai);
-    input("ngayVaoLam", sql.Date, nhanVien.ngayVaoLam)
-      .input("ngayNghiViec", sql.Date, nhanVien.ngayNghiViec)
-      .input("luong", sql.Decimal, nhanVien.luong)
+      .input("tenNhanVien", sql.NVarChar, nhanVien.hoTen)
       .input("maBoPhan", sql.VarChar, nhanVien.maBoPhan)
-      .input("maChiNhanh", sql.VarChar, nhanVien.maChiNhanh)
-      .query(
-        "UPDATE NHANVIEN SET HOTEN = @hoTen, NGAYSINH = @ngaySinh, GIOITINH = @gioiTinh, DIACHI = @diaChi, SODIENTHOAI = @soDienThoai, NGAYVAOLAM = @ngayVaoLam, NGAYNGHIVIEC = @ngayNghiViec, LUONG = @luong, MABOPHAN = @maBoPhan, MACHINHANH = @maChiNhanh WHERE MANHANVIEN = @maNhanVien"
-      );
+      .execute("sp_SuaNhanVien");
 
-    return await this.getNhanVienByMaNhanVien(maNhanVien);
+    return await this.one(maNhanVien);
   }
 
-  static async deleteNhanVien(maNhanVien) {
+  static async delete(maNhanVien) {
     const pool = await poolPromise;
     await pool
       .request()
       .input("maNhanVien", sql.VarChar, maNhanVien)
-      .query("DELETE FROM NHANVIEN WHERE MANHANVIEN = @maNhanVien");
+      .execute("sp_XoaNhanVien");
+  }
+
+  static async addOrder(maNhanVien, maKhachHang, maMon, soLuong) {
+    const pool = await poolPromise;
+    await pool
+      .request()
+      .input("maPhieu", sql.VarChar, id_creator("PMH"))
+      .input("maNhanVien", sql.VarChar, maNhanVien)
+      .input("ngayLap", sql.DateTime, new Date())
+      .input("maKhachHang", sql.VarChar, maKhachHang)
+      .input("maMon", sql.VarChar, maMon)
+      .input("soLuong", sql.Int, soLuong)
+      .execute("sp_ThemPhieuDatMon");
+    
+    return await this.one(maNhanVien);
+  }
+
+  static async search(maChiNhanh, query) {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("query", sql.NVarChar, query)
+      .input("maChiNhanh", sql.VarChar, maChiNhanh)
+      .execute("sp_TimKiemNhanVien");
+
+    return result.recordset;
   }
 }
 

@@ -8,7 +8,7 @@
         <%- include('../partials/staffNavbar') %>
 
         <!-- Main Content -->
-          <div class="col-md-10 p-4">
+          <div class="col-md-12 p-4">
             <h1 class="text-center mb-4">Đặt Món Cho Khách Hàng</h1>
           
               <div class="card mb-4">
@@ -37,31 +37,46 @@
                 <div class="card mb-4">
                   <div class="card-header">Thông Tin Khách Hàng</div>
                   <div class="card-body">
+                    <!-- Chọn trạng thái khách hàng -->
                     <div class="mb-3">
-                      <label for="name" class="form-label">Họ Tên:</label>
-                      <input type="text" class="form-control" id="name" name="name" required>
-                    </div>
-                    <!-- CCCD -->
-                    <div class="mb-3">
-                      <label for="cccd" class="form-label">CCCD:</label>
-                      <input type="text" class="form-control" id="cccd" name="cccd" required>
-                    </div>
-                    <!-- Giới tính -->
-                    <div class="mb-3">
-                      <label for="gender" class="form-label">Giới tính:</label>
-                      <select class="form-select" id="gender" name="gender">
-                        <option value="Nam">Nam</option>
-                        <option value="Nữ">Nữ</option>
+                      <label for="membership" class="form-label">Khách Hàng:</label>
+                      <select class="form-select" id="membership" name="membership" onchange="toggleCustomerFields()">
+                        <option value="no-card">Chưa Có Thẻ</option>
+                        <option value="has-card">Đã Có Thẻ</option>
                       </select>
                     </div>
-                    <div class="mb-3">
-                      <label for="phone" class="form-label">Số Điện Thoại:</label>
-                      <input type="text" class="form-control" id="phone" name="phone" required>
+
+                    <!-- Trường nhập mã khách hàng (ẩn mặc định) -->
+                    <div id="existing-customer" class="mb-3" style="display: none;">
+                      <label for="memberCard" class="form-label">Mã Khách Hàng:</label>
+                      <input type="text" class="form-control" id="memberCard" name="memberCard" placeholder="Nhập mã khách hàng">
                     </div>
-                    <!-- Email -->
-                    <div class="mb-3">
-                      <label for="email" class="form-label">Email:</label>
-                      <input type="email" class="form-control" id="email" name="email" required>
+
+                    <!-- Form đăng ký thông tin (hiển thị mặc định) -->
+                    <div id="new-customer">
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Họ Tên:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="cccd" class="form-label">CCCD:</label>
+                        <input type="text" class="form-control" id="cccd" name="cccd" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="gender" class="form-label">Giới tính:</label>
+                        <select class="form-select" id="gender" name="gender">
+                          <option value="Nam">Nam</option>
+                          <option value="Nữ">Nữ</option>
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label for="phone" class="form-label">Số Điện Thoại:</label>
+                        <input type="text" class="form-control" id="phone" name="phone" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -76,7 +91,7 @@
                         <select class="form-select" id="dishSelect">
                           <option value="" selected>Chọn món...</option>
                           <% allMonAn.forEach(monAn => { %>
-                            <option value="<%= monAn.TENMON %>" data-id="<%= monAn.MAMON %>" data-price="<%= monAn.GIA %>"><%= monAn.TENMON %> - <%= monAn.GIA %> VND</option>
+                            <option value="<%= monAn.TenMonAn %>" data-id="<%= monAn.MaMon %>" data-price="<%= monAn.Gia %>"><%= monAn.TenMonAn %> - <%= monAn.Gia %> VND</option>
                           <% }) %>
                         </select>
                       </div>
@@ -117,10 +132,6 @@
               <div class="card mb-4">
                 <div class="card-header">Thanh Toán</div>
                 <div class="card-body">
-                  <div class="mb-3">
-                    <label for="memberCard" class="form-label">Thẻ Thành Viên (Nếu có):</label>
-                    <input type="text" class="form-control" id="memberCard" placeholder="Nhập mã thẻ">
-                  </div>
                   <div class="text-end">
                     <button type="button" class="btn btn-primary" id="checkoutBtn">Xuất Hoá Đơn</button>
                   </div>
@@ -159,6 +170,19 @@
 </div>
 
 <script>
+    function toggleCustomerFields() {
+      const membershipSelect = document.getElementById("membership");
+      const existingCustomer = document.getElementById("existing-customer");
+      const newCustomer = document.getElementById("new-customer");
+
+      if (membershipSelect.value === "has-card") {
+        existingCustomer.style.display = "block";
+        newCustomer.style.display = "none";
+      } else {
+        existingCustomer.style.display = "none";
+        newCustomer.style.display = "block";
+      }
+    }
 
     const dishesList = [];
 

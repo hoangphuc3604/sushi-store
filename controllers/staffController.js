@@ -2,140 +2,185 @@ const KhachHang = require("../models/khachHangModel");
 const KhuVuc = require("../models/khuVucModel");
 const MonAn = require("../models/monAnModel");
 const NhanVien = require("../models/nhanVienModel");
-const ChiNhanh = require("../models/chiNhanhModel");
+const PhanMuc = require("../models/phanMucModel");
+const PhieuDat = require("../models/phieuDatModel");
 const PER_PAGE = 8;
 
 class staffController {
-    // [GET] /staff
+    // [GET] /staff ok
     async loadMainPage(req, res) {
         let {email, role} = req;
-        const user = {MAKHACHHANG: 1};
+        const id = email.split("@")[0];
+        const user = NhanVien.one(id);
         res.render("staff/staffDashboard", { title: "Dashboard", user, role });
     }
 
-    // [GET] /staff/add-dish
+    // [GET] /staff/add-dish ok
     async addDish(req, res) {
         let {email, role} = req;
-        const user = {MAKHACHHANG: 1};
+        const id = email.split("@")[0];
+        const user = NhanVien.one(id);
 
-        const allKhuVuc = await KhuVuc.getAll(); 
+        const allKhuVuc = await KhuVuc.all(); 
         const phanMuc = {};
         for (const cur of allKhuVuc) {
-            const phanMucs = await KhuVuc.getAllPhanMucByMaKhuVuc(cur.MAKHUVUC);
-            phanMuc[cur.MAKHUVUC] = phanMucs;
+            const phanMucs = await KhuVuc.phanMucs(cur.MaKhuVuc);
+            phanMuc[cur.MaKhuVuc] = phanMucs;
         }
 
         res.render("staff/addDish", { title: "Add Dish", user, role, allKhuVuc, phanMuc });
     }
 
-    // [POST] /staff/add-dish
+    // [POST] /staff/add-dish ok
     async postAddDish(req, res) {
-        
+        const {email, role} = req;
+        const id = email.split("@")[0];
+        const user = NhanVien.one(id);     
+
+        const {category, name, price, status} = req.body;
+        const dish = {
+            tenMonAn: name,
+            gia: price,
+            maPhanMuc: category,
+            trangThaiPhucVu: status,
+        }
+        await MonAn.add(dish);
+        res.redirect("/staff/add-dish");
     }
 
-    // [GET] /staff/update-dish
+    // [GET] /staff/update-dish x
     async updateDish(req, res) {
         let {email, role} = req;
-        const user = {};
+        const id = email.split("@")[0];
+        const user = NhanVien.one(id);
+
         const allMonAn = [
             {
-                MAMON: 1,
-                TENMON: "Sushi cá hồi",
-                GIA: 100000,
+                MaMon: 1,
+                TenMonAn: "Sushi cá hồi",
+                Gia: 100000,
             },
             {
-                MAMON: 2,
-                TENMON: "Sushi cá thu",
-                GIA: 200000,
+                MaMon: 2,
+                TenMonAn: "Sushi cá thu",
+                Gia: 200000,
             },
             {
-                MAMON: 3,
-                TENMON: "Sushi cá trích",
-                GIA: 200000,
+                MaMon: 3,
+                TenMonAn: "Sushi cá trích",
+                Gia: 200000,
             },
             {
-                MAMON: 4,
-                TENMON: "Sushi cá basa",
-                GIA: 200000,
+                MaMon: 4,
+                TenMonAn: "Sushi cá basa",
+                Gia: 200000,
             },
         ]
         res.render("staff/dishUpdate", { title: "Update Dish", user, role, allMonAn });
     }
 
+    // [GET] /staff/update-dish/:id
     async renderUpdateDishWithId(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {id} = req.params;
-        const monAn = await MonAn.getMonAnByMaMonAn(id);
-        const phanMuc = await KhuVuc.getAllPhanMucByMaKhuVuc(monAn.MAKHUVUC);
+        const monAn = await MonAn.one(id);
+        const maKhuVuc = await PhanMuc.khuVuc(monAn.MaPhanMuc).MaKhuVuc; // Lay ma khu vuc cua mon an
+        const phanMuc = await KhuVuc.phanMucs(maKhuVuc);
         res.render("staff/updateDishByID", { title: "Update Dish", user, role, monAn, phanMuc });
     }
-
+    
+    // [POST] /staff/update-dish/:id ok
     async updateDishWithId(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {id} = req.params;
         const {TENMON, GIA, MAPHANMUC, TRANGTHAIPHUCVU} = req.body;
 
-        await MonAn.updateMonAn(id, {tenMonAn: TENMON, gia: GIA, maPhanMuc: MAPHANMUC, trangThaiPhucVu: TRANGTHAIPHUCVU});
+        await MonAn.update(id, {tenMonAn: TENMON, gia: GIA, maPhanMuc: MAPHANMUC, trangThaiPhucVu: TRANGTHAIPHUCVU});
 
         res.redirect("/staff/update-dish");
     }
-
+    
+    // [POST] /staff/dish-search/:page ok
     async dishSearch(req, res) {
         let {email, role} = req;
-        const user = {};
+        const id = email.split("@")[0];
+        const user = NhanVien.one(id);
+
         const {query} = req.body;
         
         const currentPage = parseInt(req.params.page) || 1;
         const allMonAn = await MonAn.searchMonAnByIndex(query, (currentPage - 1) * PER_PAGE);
-        const length = await MonAn.getSearchLength(query);
+        const length = allMonAn.length;
         const totalPages = Math.ceil(length / PER_PAGE);
 
         res.render("staff/dishSearch", { title: "Dish Searching", user, role, allMonAn, currentPage, totalPages });
     }
-
+    
+    // [GET] /staff/booking x
     async renderBooking(req, res) {
         let {email, role} = req;
-        const user = {};
-        const allMonAn = [
+        const id = email.split("@")[0]; 
+        const user = NhanVien.one(id);
+
+        const allMonAn = [ // Lay mon an theo chi nhanh
             {
-                MAMON: 1,
-                TENMON: "Sushi cá hồi",
-                GIA: 100000,
+                MaMon: 1,
+                TenMonAn: "Sushi cá hồi",
+                Gia: 100000,
             },
             {
-                MAMON: 2,
-                TENMON: "Sushi cá thu",
-                GIA: 200000,
+                MaMon: 2,
+                TenMonAn: "Sushi cá thu",
+                Gia: 200000,
             },
             {
-                MAMON: 3,
-                TENMON: "Sushi cá trích",
-                GIA: 200000,
+                MaMon: 3,
+                TenMonAn: "Sushi cá trích",
+                Gia: 200000,
             },
             {
-                MAMON: 4,
-                TENMON: "Sushi cá basa",
-                GIA: 200000,
+                MaMon: 4,
+                TenMonAn: "Sushi cá basa",
+                Gia: 200000,
             },
         ]
         // const allMonAn = MonAn.getMonAnByChiNhanh(user.MACHINHANH);
         res.render("staff/dishBooking", { title: "Booking", user, role, allMonAn });
     }
 
+    // [POST] /staff/booking xxx
     async booking(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0]; // Chỉnh sửa khi xuất hóa đơn thì qua trang khác để giảm giá
+        const user = NhanVien.one(staffId);
+
         const {table, name, cccd, gender, phone, memberCard, total, dishes} = req.body;
         const cusEmail = req.body.email;
+        console.log(dishes);
 
-        //
+        if (memberCard) {
+            // Lay thong tin khach hang
+        } else {
+            await KhachHang.add({tenKhachHang: name, soDienThoai: phone, gioiTinh: gender, CCCD: cccd, email: cusEmail});
+            const maKhachHang = await KhachHang.one(cusEmail).MaKhachHang;
+            dishes.forEach(async dish => {
+                await NhanVien.addOrder({maNhanVien: staffId, maKhachHang: maKhachHang, maMon: dish.id, soLuong: dish.quantity});
+            });
+        }
     }
 
+    // [GET] /staff/statistics/revenue xxx sửa lại dữ liệu revenueStats là trong ngày hôm nay
     async renderRevenueStatistics(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         let type, startDate, endDate;
         type = "day";
         startDate = new Date().toISOString().split("T")[0];
@@ -149,9 +194,12 @@ class staffController {
         res.render("staff/statistics/revenue", { title: "Revenue Statistics", startDate, endDate, type, revenueStats, user, role });
     }
 
+    // [POST] /staff/statistics/revenue xxx sửa lại dữ liệu revenueStats cho đúng
     async getRevenueStatistics(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {type, startDate, endDate} = req.body;
         let revenueStats = [
             {
@@ -182,9 +230,12 @@ class staffController {
         res.render("staff/statistics/revenue", { title: "Revenue Statistics", startDate, endDate, type, revenueStats, user, role });
     }
 
+    // [GET] /staff/statistics/service xxx sửa lại dữ liệu employeeStats cho đúng
     async renderServiceStatistics(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         let type, startDate, endDate;
         type = "day";
         startDate = new Date().toISOString().split("T")[0];
@@ -199,10 +250,13 @@ class staffController {
 
         res.render("staff/statistics/service", { title: "Employee Statistics", type, startDate, endDate, employeeStats, user, role });
     }
-
+    
+    // [POST] /staff/statistics/service xxx sửa lại dữ liệu employeeStats cho đúng
     async getServiceStatistics(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {type, startDate, endDate} = req.body;
         let employeeStats = [
             {
@@ -238,51 +292,56 @@ class staffController {
         res.render("staff/statistics/service", { title: "Employee Statistics", type, startDate, endDate, employeeStats, user, role });
     }
 
+    // [GET] /staff/statistics/employee ok
     async renderEmployeeStatistics(req, res) {
         let {email, role} = req;
-        const user = {};
-        const allKhuVuc = await KhuVuc.getAll();
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
+        const allKhuVuc = await KhuVuc.all();
         const chiNhanh = {};
         for (const cur of allKhuVuc) {
-            const chiNhanhs = await KhuVuc.getChiNhanhByMaKhuVuc(cur.MAKHUVUC);
-            chiNhanh[cur.MAKHUVUC] = chiNhanhs.map(cn => cn);
+            const chiNhanhs = await KhuVuc.chiNhanhs(cur.MaKhuVuc);
+            chiNhanh[cur.MaKhuVuc] = chiNhanhs.map(cn => cn);
         }
         const employees = [];
 
         res.render("staff/statistics/employee", { title: "Employee Statistics", allKhuVuc, chiNhanh, employees, user, role });
     }
 
+    // [POST] /staff/statistics/employee ok
     async searhStaff(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {query, branch} = req.body;
         console.log(query, branch);
 
-        const allKhuVuc = await KhuVuc.getAll();
+        const allKhuVuc = await KhuVuc.all();
         const chiNhanh = {};
         for (const cur of allKhuVuc) {
-            const chiNhanhs = await KhuVuc.getChiNhanhByMaKhuVuc(cur.MAKHUVUC);
-            chiNhanh[cur.MAKHUVUC] = chiNhanhs.map(cn => cn);
+            const chiNhanhs = await KhuVuc.chiNhanhs(cur.MaKhuVuc);
+            chiNhanh[cur.MaKhuVuc] = chiNhanhs.map(cn => cn);
         }
 
-        const employees = [
-            {
-                id: 1,
-                name: "Nguyễn Văn A",
-                branchName: "Chi nhánh 1",
-                gender: "Nam",
-                phone: "0123456789",
-                address: "Hà Nội",
-                startDate: "2021-01-01",
-                salary: 10000000,
-            },
-        ]
-        res.render("staff/statistics/employee", { title: "Employee Statistics", allKhuVuc, chiNhanh, employees, user, role });
+        const employees = await NhanVien.search(branch, query);
+        let toast = {};
+        if (employees.length === 0) {
+            toast = {
+                type: "warning",
+                message: "Không tìm thấy nhân viên nào",
+            }
+        }
+        res.render("staff/statistics/employee", { title: "Employee Statistics", allKhuVuc, chiNhanh, employees, user, role, toast });
     }
 
+    // [GET] /staff/statistics/invoice ok
     async renderInvoices(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const totalPages = 1;
         const currentPage = parseInt(req.params.page) || 1;
 
@@ -290,267 +349,177 @@ class staffController {
         res.render("staff/statistics/invoice", { title: "Invoices", invoices, totalPages, currentPage, user, role });
     }
 
+    // [POST] /staff/statistics/invoice 
     async searchInvoices(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {maKhachHang, ngayLap} = req.body;
         const totalPages = 1; // sửa lại 1
         const currentPage = parseInt(req.params.page) || 1;
 
-        const invoices = [
-            {
-                maHoaDon: 1,
-                tongTien: 1000000,
-                soTienGiam: 0,
-                thanhTien: 1000000,
-                maPhieu: 1,
-                maChuongTrinh: 1,
-            },
-            {
-                maHoaDon: 2,
-                tongTien: 2000000,
-                soTienGiam: 0,
-                thanhTien: 2000000,
-                maPhieu: 2,
-                maChuongTrinh: 2,
-            },
-            {
-                maHoaDon: 3,
-                tongTien: 3000000,
-                soTienGiam: 0,
-                thanhTien: 3000000,
-                maPhieu: 3,
-                maChuongTrinh: 3,
+        const invoices = await KhachHang.bill(maKhachHang, ngayLap);
+        let toast = {};
+        if (invoices.length === 0) {
+            toast = {
+                type: "warning",
+                message: "Không tìm thấy hóa đơn nào",
             }
-        ]
-        res.render("staff/statistics/invoice", { title: "Invoices", invoices, totalPages, currentPage, user, role });
+        }
+        res.render("staff/statistics/invoice", { title: "Invoices", invoices, totalPages, currentPage, user, role, toast });
     }
 
+    // [GET] /staff/statistics/order ok
     async renderOrders(req, res) {
         let {email, role} = req;
-        const user = {};
-        let ngayLap, maNhanVien, maKhachHang;
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
 
-        const totalPages = 1; // sửa lại 1
+        let {NgayLap, MaNhanVien, MaKhachHang} = req.params.query;
+
         const currentPage = parseInt(req.params.page) || 1;
-        const orders = [];
-        res.render("staff/statistics/order", { title: "Orders", orders, ngayLap, maNhanVien, maKhachHang, totalPages, currentPage, user, role });
+        const orders = PhieuDat.search(MaKhachHang, NgayLap, MaNhanVien, (currentPage - 1) * PER_PAGE);
+        const totalPages = orders.length / PER_PAGE;
+
+        res.render("staff/statistics/order", { title: "Orders", orders, NgayLap, MaNhanVien, MaKhachHang, totalPages, currentPage, user, role });
     }
 
+    // [POST] /staff/statistics/order
     async searchOrders(req, res) {
         let {email, role} = req;
-        const user = {};
-        const {maKhachHang, ngayLap, maNhanVien} = req.body;
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
 
-        const totalPages = 2; // sửa lại 1
+        const {maKhachHang, ngayLap, maNhanVien} = req.body;
         const currentPage = parseInt(req.params.page) || 1;
 
-        const orders = [
-            {
-                maPhieu: 1,
-                ngayLap: "2021-01-01",
-                maNhanVien: 1,
-                maKhachHang: 1,
-            },
-            {
-                maPhieu: 2,
-                ngayLap: "2021-01-02",
-                maNhanVien: 2,
-                maKhachHang: 2,
-            },
-            {
-                maPhieu: 3,
-                ngayLap: "2021-01-03",
-                maNhanVien: 3,
-                maKhachHang: 3,
-            },
-            {
-                maPhieu: 4,
-                ngayLap: "2021-01-04",
-                maNhanVien: 4,
-                maKhachHang: 4,
-            },
-        ]
+        const orders = await PhieuDat.search(maKhachHang, ngayLap, maNhanVien, (currentPage - 1) * PER_PAGE);
+        const totalPages = orders.length / PER_PAGE;
         res.render("staff/statistics/order", { title: "Orders", orders, ngayLap, maKhachHang, maNhanVien, totalPages, currentPage, user, role });
     }
 
+    // [GET] /staff/statistics/edit-order/:id
     async renderEditOrder(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {id} = req.params;
-        const order = {
-            maPhieu: 1,
-            ngayLap: "2021-01-01",
-            maNhanVien: 1,
-            maKhachHang: 1,
-        }
+        const order = PhieuDat.one(id);
         res.render("staff/statistics/editOrder", { title: "Edit Order", order, user, role });
     }
 
+    // [POST] /staff/statistics/edit-order/:id xxx sửa form edit order
     async editOrder(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {id} = req.params;
         const {ngayLap, maNhanVien, maKhachHang} = req.body;
+
+
         res.redirect("/staff/orders/1");
     }
 
     async deleteOrder(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {id} = req.params;
-        console.log(id);
+        await PhieuDat.delete(id);
         res.redirect("/staff/orders/1");
     }
 
-    async addOrder(req, res) {
-        let {email, role} = req;
-        const user = {};
-        const {ngayLap, maNhanVien, maKhachHang} = req.body;
-        console.log(ngayLap, maNhanVien, maKhachHang);
-        res.redirect("/staff/orders/1");
-    }
+    // async addOrder(req, res) {
+    //     let {email, role} = req;
+    //     const staffId = email.split("@")[0];
+    //     const user = NhanVien.one(staffId);
 
+    //     const {ngayLap, maNhanVien, maKhachHang} = req.body;
+    //     console.log(ngayLap, maNhanVien, maKhachHang);
+    //     res.redirect("/staff/orders/1");
+    // }
+
+    // [GET] /staff/customer-card/:page ok
     async renderCustomerCard(req, res) {
         let {email, role} = req;
-        const user = {};
-        const totalPages = 3;
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const currentPage = parseInt(req.params.page) || 1;
         const query = "";
-
-        // [MATHE],[NGAYLAP],[NGAYHETHAN],[DIEMTICHLUY],[TRANGTHAI],[LOAITHE],[NGAYDATHANG],[MAKHACHHANG]
-        const cards = [
-            {
-                MATHE: 1,
-                NGAYLAP: "2021-01-01",
-                NGAYHETHAN: "2022-01-01",
-                DIEMTICHLUY: 100,
-                TRANGTHAI: 1,
-                LOAITHE: "Thẻ thường",
-                NGAYDATHANG: "2021-01-01",
-                MAKHACHHANG: 1,
-            },
-            {
-                MATHE: 2,
-                NGAYLAP: "2021-01-02",
-                NGAYHETHAN: "2022-01-02",
-                DIEMTICHLUY: 200,
-                TRANGTHAI: 1,
-                LOAITHE: "Thẻ thường",
-                NGAYDATHANG: "2021-01-02",
-                MAKHACHHANG: 2,
-            },
-            {
-                MATHE: 3,
-                NGAYLAP: "2021-01-03",
-                NGAYHETHAN: "2022-01-03",
-                DIEMTICHLUY: 300,
-                TRANGTHAI: 1,
-                LOAITHE: "Thẻ thường",
-                NGAYDATHANG: "2021-01-03",
-                MAKHACHHANG: 3,
-            },
-            {
-                MATHE: 4,
-                NGAYLAP: "2021-01-04",
-                NGAYHETHAN: "2022-01-04",
-                DIEMTICHLUY: 400,
-                TRANGTHAI: 1,
-                LOAITHE: "Thẻ thường",
-                NGAYDATHANG: "2021-01-04",
-                MAKHACHHANG: 4,
-            },
-        ]
+        
+        const cards = await KhachHang.allTheKhachHang();
+        const totalPages = Math.ceil(cards.length / PER_PAGE);
         res.render("staff/statistics/customerCard", { title: "Customer Card", cards, query, totalPages, currentPage, user, role });
     }
 
+    // [POST] /staff/customer-card/search xxx sửa hàm searchTheKhachHang với sp
     async searchCustomerCard(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {query} = req.body;
         const totalPages = 3;
         const currentPage = parseInt(req.params.page) || 1;
 
-        const cards = [
-            {
-                MATHE: 1,
-                NGAYLAP: "2021-01-01",
-                NGAYHETHAN: "2022-01-01",
-                DIEMTICHLUY: 100,
-                TRANGTHAI: 1,
-                LOAITHE: "Thẻ thường",
-                NGAYDATHANG: "2021-01-01",
-                MAKHACHHANG: 1,
-            },
-            {
-                MATHE: 2,
-                NGAYLAP: "2021-01-02",
-                NGAYHETHAN: "2022-01-02",
-                DIEMTICHLUY: 200,
-                TRANGTHAI: 1,
-                LOAITHE: "Thẻ thường",
-                NGAYDATHANG: "2021-01-02",
-                MAKHACHHANG: 2,
-            },
-            {
-                MATHE: 3,
-                NGAYLAP: "2021-01-03",
-                NGAYHETHAN: "2022-01-03",
-                DIEMTICHLUY: 300,
-                TRANGTHAI: 1,
-                LOAITHE: "Thẻ thường",
-                NGAYDATHANG: "2021-01-03",
-                MAKHACHHANG: 3,
-            },
-        ]
+        const cards = KhachHang.searchTheKhachHang(query);
         res.render("staff/statistics/customerCard", { title: "Customer Card", cards, query, totalPages, currentPage, user, role });
     }
 
+    // [GET] /staff/customer-card/add ok
     async renderAddCustomerCard(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         res.render("staff/statistics/addCustomerCard", { title: "Add Customer Card", user, role });
     }
 
+    // [POST] /staff/customer-card/add ok
     async addCustomerCard(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {NGAYLAP, NGAYHETHAN, DIEMTICHLUY, TRANGTHAI, NGAYDATHANG, LOAITHE, MAKHACHHANG} = req.body;
-        console.log(NGAYLAP, NGAYHETHAN, DIEMTICHLUY, LOAITHE, MAKHACHHANG, TRANGTHAI, NGAYDATHANG);
+        await KhachHang.addTheKhachHang(MAKHACHHANG);
         res.redirect("/staff/customer-card/1");
     }
 
     async renderEditCustomerCard(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {id} = req.params;
-        const card = {
-            MATHE: 1,
-            NGAYLAP: "2021-01-01",
-            NGAYHETHAN: "2022-01-01",
-            DIEMTICHLUY: 100,
-            TRANGTHAI: 1,
-            LOAITHE: "Thẻ thường",
-            NGAYDATHANG: "2021-01-01",
-            MAKHACHHANG: 1,
-        }
-        res.render("staff/statistics/editCustomerCard", { title: "Edit Customer Card", card, user, role });
+        const customerCard = await KhachHang.oneTheKhachHang(id);
+        console.log(customerCard);
+        res.render("staff/statistics/editCustomerCard", { title: "Edit Customer Card", customerCard, user, role });
     }
 
     async editCustomerCard(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {id} = req.params;
-        const {NGAYLAP, NGAYHETHAN, DIEMTICHLUY, TRANGTHAI, NGAYDATHANG, LOAITHE, MAKHACHHANG} = req.body;
-        console.log(NGAYLAP, NGAYHETHAN, DIEMTICHLUY, LOAITHE, MAKHACHHANG, TRANGTHAI, NGAYDATHANG);
+        const {NGAYLAP, NGAYHETHAN, DIEMTICHLUY, TRANGTHAI, LOAITHE, MAKHACHHANG} = req.body;
+        await KhachHang.updateTheKhachHang(id, NGAYLAP, NGAYHETHAN, DIEMTICHLUY, TRANGTHAI, LOAITHE, MAKHACHHANG);
         res.redirect("/staff/customer-card/1");
     }
 
     async deleteCustomerCard(req, res) {
         let {email, role} = req;
-        const user = {};
+        const staffId = email.split("@")[0];
+        const user = NhanVien.one(staffId);
+
         const {id} = req.params;
-        console.log(id);
+        await KhachHang.deleteTheKhachHang(id);
         res.redirect("/staff/customer-card/1");
     }
 

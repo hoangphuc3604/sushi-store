@@ -267,10 +267,73 @@ html, body {
     margin-left: 0;
     width: 50px;
   }
-
-  #adminSidebar, #staffSidebar {
-    min-height: fit-content;
-  }
 }
+
+/* Sidebar mở */
+.sidebar-open #sidebar {
+  left: 0;
+}
+
+/* Overlay hiển thị */
+.sidebar-open #sidebar-overlay {
+  visibility: visible;
+  opacity: 1;
+}
+
+#adminSidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1040;
+}
+
+#adminSidebar.show {
+  transform: translateX(0);
+}
+
+#admin-sidebar-toggle {
+  display: none;
+  width: 40px;
+  background: rgba(255, 255, 255, 1);
+  color: black;
+  position: fixed;
+  top: 10px;
+  left: 15px;
+  z-index: 1050;
+}
+
+#admin-sidebar-toggle.show {
+  display: block;
+}
+
+#admin-sidebar-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* Scroll top button */
+#scrollToTop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  font-size: 18px;
+  background-color: rgba(255, 255, 255, 1);
+  color: black;
+  border: none;
+  border-radius:  50%;
+  cursor: pointer;
+  z-index: 1000;
+  transition: opacity 0.3s;
+}
+#scrollToTop:hover {
+  background-color: gray;
+}
+
 
 

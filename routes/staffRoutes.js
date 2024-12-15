@@ -40,16 +40,15 @@ router.post("/orders/search", authMiddleware(["staff"]), staffController.searchO
 router.get("/orders/edit/:id", authMiddleware(["staff"]), staffController.renderEditOrder)
 router.post("/orders/edit/:id", authMiddleware(["staff"]), staffController.editOrder)
 router.get("/orders/delete/:id", authMiddleware(["staff"]), staffController.deleteOrder)
-router.post("/orders/add", authMiddleware(["staff"]), staffController.addOrder)
 
 // customer card
 router.get("/customer-card/add", authMiddleware(["staff"]), staffController.renderAddCustomerCard)
 router.post("/customer-card/search", authMiddleware(["staff"]), staffController.searchCustomerCard)
-router.get("/customer-card/:page", authMiddleware(["staff"]), staffController.renderCustomerCard)
 router.post("/customer-card/add", authMiddleware(["staff"]), staffController.addCustomerCard)
 router.get("/customer-card/edit/:id", authMiddleware(["staff"]), staffController.renderEditCustomerCard)
 router.post("/customer-card/edit/:id", authMiddleware(["staff"]), staffController.editCustomerCard)
 router.get("/customer-card/delete/:id", authMiddleware(["staff"]), staffController.deleteCustomerCard)
+router.get("/customer-card/:page", authMiddleware(["staff"]), staffController.renderCustomerCard)
 
 
 module.exports = router;

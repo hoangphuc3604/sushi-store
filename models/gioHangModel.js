@@ -2,16 +2,16 @@ const { sql, poolPromise } = require("../utils/db");
 const KhachHang = require("./khachHangModel");
 
 class GioHang {
-    static async getGioHang(email, food) {
+    static async one(email, food) {
         const pool = await poolPromise;
-        const khachHang = await KhachHang.getKhachHangByEmail(email);
+        const khachHang = await KhachHang.one(email);
 
         const result = await pool
             .request()
-            .input("maKhachHang", sql.Int, khachHang.MAKHACHHANG)
-            .input("maMon", sql.Int, food)
+            .input("maKhachHang", sql.VarChar, khachHang.MaKhachHang)
+            .input("maMon", sql.VarChar, food)
             .query(
-                "SELECT * FROM GIOHANG WHERE MAKHACHHANG = @maKhachHang AND MAMON = @maMon"
+                "SELECT * FROM GIO_HANG WHERE MaKhachHang = @maKhachHang AND MaMon = @maMon"
             );
 
         return result.recordset;
@@ -20,13 +20,13 @@ class GioHang {
     static async createGioHang(email, food, staff) {
         const pool = await poolPromise;
 
-        const check = await this.getGioHang(email, food);
+        const check = await this.one(email, food);
         if (check.length > 0) {
             await pool
                 .request()
-                .input("maKhachHang", sql.Int, check[0].MAKHACHHANG)
-                .input("maMon", sql.Int, food)
-                .input("soLuong", sql.Int, check[0].SOLUONG + 1)
+                .input("maKhachHang", sql.VarChar, check[0].MAKHACHHANG)
+                .input("maMon", sql.VarChar, food)
+                .input("soLuong", sql.VarChar, check[0].SOLUONG + 1)
                 .query(
                     "UPDATE GIOHANG SET SOLUONG = @soLuong WHERE MAKHACHHANG = @maKhachHang AND MAMON = @maMon"
                 );
@@ -36,9 +36,9 @@ class GioHang {
         const khachHang = await KhachHang.getKhachHangByEmail(email);
         await pool
             .request()
-            .input("maKhachHang", sql.Int, khachHang.MAKHACHHANG)
-            .input("maMon", sql.Int, food)
-            .input("soLuong", sql.Int, 1)
+            .input("maKhachHang", sql.VarChar, khachHang.MAKHACHHANG)
+            .input("maMon", sql.VarChar, food)
+            .input("soLuong", sql.VarChar, 1)
             .query(
                 "INSERT INTO GIOHANG (MAKHACHHANG, MAMON, SOLUONG) VALUES (@maKhachHang, @maMon, @soLuong)"
             );
@@ -48,10 +48,8 @@ class GioHang {
         const pool = await poolPromise;
         const result = await pool
             .request()
-            .input("maKhachHang", sql.Int, maKhachHang)
-            .query(
-                "SELECT GH.ID ID, GH.MAKHACHHANG MAKHACHHANG, M.TENMON TENMON, M.MAMON MAMON, GH.SOLUONG SOLUONG, GH.NGAYTHEM NGAYTHEM, M.GIA GIA FROM GIOHANG GH, MONAN M WHERE GH.MAKHACHHANG = @maKhachHang AND GH.MAMON = M.MAMON"
-            );
+            .input("maKhach", sql.VarChar, maKhachHang)
+            .execute("sp_LayGioHangCuaKhach"); 
 
         return result.recordset;
     }
@@ -61,11 +59,11 @@ class GioHang {
 
         await pool
             .request()
-            .input("maKhachHang", sql.Int, maKhachHang)
-            .input("maMon", sql.Int, maMon)
-            .input("soLuong", sql.Int, soLuong)
+            .input("maKhachHang", sql.VarChar, maKhachHang)
+            .input("maMon", sql.VarChar, maMon)
+            .input("soLuong", sql.VarChar, soLuong)
             .query(
-                "UPDATE GIOHANG SET SOLUONG = @soLuong WHERE MAKHACHHANG = @maKhachHang AND MAMON = @maMon"
+                "UPDATE GIO_HANG SET SoLuong = @soLuong WHERE MaKhachHang = @maKhachHang AND MaMon = @maMon"
             );
     }
 
@@ -74,11 +72,9 @@ class GioHang {
 
         await pool
             .request()
-            .input("maKhachHang", sql.Int, maKhachHang)
-            .input("maMon", sql.Int, maMon)
-            .query(
-                "DELETE FROM GIOHANG WHERE MAKHACHHANG = @maKhachHang AND MAMON = @maMon"
-            );
+            .input("maKhach", sql.VarChar, maKhachHang)
+            .input("maMon", sql.VarChar, maMon)
+            .execute("sp_XoaMonKhoiGioHang");
     }
 }
 

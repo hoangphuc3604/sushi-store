@@ -1,71 +1,68 @@
 const { sql, poolPromise } = require("../utils/db");
 
 class KhuVuc {
-  static async getAll() {
+  static async all() {
     const pool = await poolPromise;
-    const result = await pool.request().query("SELECT * FROM KHUVUC");
+    const result = await pool.request().query("SELECT * FROM KHU_VUC");
     return result.recordset;
   }
 
-  static async getKhuVucByMaKhuVuc(maKhuVuc) {
+  static async one(maKhuVuc) {
     const pool = await poolPromise;
     const result = await pool
       .request()
       .input("maKhuVuc", sql.VarChar, maKhuVuc)
-      .query("SELECT * FROM KHUVUC WHERE MAKHUVUC = @maKhuVuc");
+      .execute("sp_LayThongTinKhuVuc");
     return result.recordset[0];
   }
 
-  static async createKhuVuc(khuVuc) {
+  static async add(khuVuc) {
     const pool = await poolPromise;
 
     await pool
       .request()
       .input("maKhuVuc", sql.VarChar, khuVuc.maKhuVuc)
       .input("tenKhuVuc", sql.NVarChar, khuVuc.tenKhuVuc)
-      .query(
-        "INSERT INTO KHUVUC (MAKHUVUC, TENKHUVUC) VALUES (@maKhuVuc, @tenKhuVuc)"
-      );
+      .execute("sp_ThemKhuVuc");
 
-    return await this.getKhuVucByMaKhuVuc(khuVuc.maKhuVuc);
+    return await this.one(khuVuc.maKhuVuc);
   }
 
-  static async updateKhuVuc(maKhuVuc, khuVuc) {
+  static async update(maKhuVuc, khuVuc) {
     const pool = await poolPromise;
     await pool
       .request()
       .input("maKhuVuc", sql.VarChar, maKhuVuc)
       .input("tenKhuVuc", sql.NVarChar, khuVuc.tenKhuVuc)
-      .query(
-        "UPDATE KHUVUC SET TENKHUVUC = @tenKhuVuc WHERE MAKHUVUC = @maKhuVuc"
-      );
+      .execute("sp_ChinhSuaKhuVuc");
 
-    return await this.getKhuVucByMaKhuVuc(maKhuVuc);
+    return await this.one(maKhuVuc);
   }
 
-  static async deleteKhuVuc(maKhuVuc) {
+  static async delete(maKhuVuc) {
     const pool = await poolPromise;
     await pool
       .request()
       .input("maKhuVuc", sql.VarChar, maKhuVuc)
-      .query("DELETE FROM KHUVUC WHERE MAKHUVUC = @maKhuVuc");
+      .execute("sp_XoaKhuVuc");
   }
 
-  static async getChiNhanhByMaKhuVuc(maKhuVuc) {
+  static async chiNhanhs(maKhuVuc) {
     const pool = await poolPromise;
     const result = await pool
       .request()
-      .input("maKhuVuc", sql.Int, maKhuVuc)
-      .query("SELECT * FROM CHINHANH WHERE MAKHUVUC = @maKhuVuc");
+      .input("maKhuVuc", sql.VarChar, maKhuVuc)
+      .execute("sp_LayDanhSachChiNhanhTrongKhuVuc");
+
     return result.recordset;
   }
 
-  static async getAllPhanMucByMaKhuVuc(maKhuVuc) {
+  static async phanMucs(maKhuVuc) {
     const pool = await poolPromise;
     const result = await pool
       .request()
-      .input("maKhuVuc", sql.Int, maKhuVuc)
-      .query("SELECT P.MAPHANMUC, P.TENPHANMUC FROM PHANMUC P, THUCDON T, KHUVUC K WHERE K.MAKHUVUC = @maKhuVuc AND K.MAKHUVUC = T.MAKHUVUC AND P.MATHUCDON = T.MATHUCDON");
+      .input("maKhuVuc", sql.VarChar, maKhuVuc)
+      .execute("sp_LayDanhSachPhanMucTrongKhuVuc");
     return result.recordset;
   }
 }

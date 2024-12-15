@@ -7,7 +7,7 @@
         <%- include('../partials/staffNavbar') %>
 
         <!-- Main Content -->
-        <div class="col-md-10 p-4">
+        <div class="col-md-12 p-4">
             <h1 class="text-center mb-4">Danh Sách Món Ăn</h1>
             <div class="card">
                 <div class="card-body">
@@ -25,17 +25,17 @@
                             <% allMonAn.forEach((dish, index) => { %>
                                 <tr>
                                     <td><%= index + 1 %></td>
-                                    <td><%= dish.TENMON %></td>
-                                    <td><%= dish.GIA.toLocaleString() %></td>
+                                    <td><%= dish.TenMonAn %></td>
+                                    <td><%= dish.Gia.toLocaleString() %></td>
                                     <td>
-                                        <% if (dish.TRANGTHAI == 1) { %>
+                                        <% if (dish.TrangThaiPhucVu == 1) { %>
                                             <span class="">Đang bán</span>
                                         <% } else { %>
                                             <span class="">Ngừng bán</span>
                                         <% } %>
                                     </td>
                                     <td>
-                                        <a href="/staff/update-dish/<%= dish.MAMON %>" class="btn btn-warning btn-sm">
+                                        <a href="/staff/update-dish/<%= dish.MaMon %>" class="btn btn-warning btn-sm">
                                             <i class="fas fa-edit"></i> Chỉnh Sửa
                                         </a>
                                     </td>

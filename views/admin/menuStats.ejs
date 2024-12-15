@@ -5,7 +5,7 @@
 
         <%- include('../partials/adminNavbar') %>
 
-        <div class="col-md-10 p-4">
+        <div class="col-md-12 p-4">
             <div class="container my-4">
                 <!-- Bộ lọc -->
                 <form action="/admin/menu-stats" method="POST" class="row">
@@ -14,8 +14,8 @@
                     <select id="area" name="area" class="form-select">
                         <option value="">Chọn khu vực</option>
                         <% areas.forEach(area => { %>
-                            <option value="<%= area.MAKHUVUC %>">
-                            <%= area.TENKHUVUC %>
+                            <option value="<%= area.MaKhuVuc %>">
+                            <%= area.TenKhuVuc %>
                             </option>
                         <% }) %>
                     </select>

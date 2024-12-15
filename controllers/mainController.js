@@ -13,8 +13,9 @@ class mainController {
             res.redirect("/admin");
             return;
         }
-        const user = await KhachHang.getKhachHangByEmail(email);
-        const allMonAn = await MonAn.getAll();
+        const user = await KhachHang.one(email);
+        console.log(user);
+        const allMonAn = await MonAn.all();
         res.render("index", { user, role, allMonAn, title: "Trang Chủ" });
     }
 
@@ -22,10 +23,10 @@ class mainController {
         const {email, role} = req;
         const {query} = req.body;
         
-        const searchResult = await MonAn.searchMonAn(query);
-        const user = await KhachHang.getKhachHangByEmail(email);
+        const searchResult = await MonAn.search(query);
+        const user = await KhachHang.one(email);
 
-        res.render("search/search", {query, searchResult, user, title: "Kết quả tìm kiếm"});
+        res.render("search/search", {query, searchResult, user, title: "Kết quả tìm kiếm", role});
     }
 }
 

@@ -6,38 +6,42 @@ const { createToken } = require("../utils/tokenCreator");
 class authControllers {
   // [GET] /auth/login
   async getUserLogin(req, res) {
-    const error = req.cookies.error;
-    res.clearCookie("error");
-    res.render("auth/login", { title: "Login", error });
+    res.render("auth/login", { title: "Login" });
   }
 
   // [POST] /auth/login
   async postUserLogin(req, res) {
     const { email, password } = req.body;
-    const user = await User.getUserByEmail(email);
+    const user = await User.one(email);
     if (!user) {
-      res.cookie("error", "Email không tồn tại");
-      return res.redirect("/auth/login");
+      const toast = {
+        message: "Email không tồn tại",
+        type: "danger",
+      };
+      return res.render("auth/login", { title: "Login", toast });
     }
 
-    const compare = await bcrypt.compare(password, user.password.trim());
+    const compare = await bcrypt.compare(password, user.MatKhau.trim());
     if (!compare) {
-      res.cookie("error", "Mật khẩu không đúng");
-      return res.redirect("/auth/login");
+      const toast = {
+        message: "Mật khẩu không chính xác",
+        type: "danger",
+      };
+      return res.render("auth/login", { title: "Login", toast });
     }
 
     const token = createToken({
-      email: user.email,
-      role: user.role,
+      email: user.Email,
+      role: user.VaiTro,
     });
 
     res.cookie("accessToken", token, {
       expires: new Date(Date.now() + 60 * 60 * 1000),
     });
-    
-    if (user.role === "staff") {
+
+    if (user.VaiTro === "staff") {
       return res.redirect("/staff");
-    } else if (user.role === "admin") {
+    } else if (user.VaiTro === "admin") {
       return res.redirect("/admin");
     } else {
       return res.redirect("/");
@@ -52,22 +56,29 @@ class authControllers {
 
   // [GET] /auth/register
   async register(req, res) {
-    const error = req.cookies.error;
-    res.clearCookie("error");
     res.render("auth/register", { title: "Register", error });
   }
 
   // [POST] /auth/register
   async postRegister(req, res) {
-    const { email, password, name, image, cccd, phone, gender} = req.body;
-    const checkUser = await User.getUserByEmail(email);
+    const { email, password, name, image, cccd, phone, gender } = req.body;
+    const checkUser = await User.one(email);
     if (checkUser) {
-      res.cookie("error", "Email đã tồn tại");
-      return res.redirect("/auth/register");
+      const toast = {
+        message: "Email đã tồn tại",
+        type: "danger",
+      };
+      return res.render("auth/register", { title: "Register", toast });
     }
 
-    await User.createUser({ email, password, image });
-    await KhachHang.createKhachHang({email, soDienThoai: phone, tenKhachHang: name, CCCD: cccd, gender});
+    await User.add({ email, password, image });
+    await KhachHang.add({
+      email,
+      soDienThoai: phone,
+      tenKhachHang: name,
+      CCCD: cccd,
+      gender,
+    });
     res.redirect("/auth/login");
   }
 }

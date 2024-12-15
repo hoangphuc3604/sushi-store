@@ -4,17 +4,12 @@
     <div class="row">
         <%- include('../../partials/staffNavbar') %>
 
-        <div class="col-md-10 p-4">
+        <div class="col-md-12 p-4">
             <div class="container mt-4">
                 <h1 class="mb-4">Thêm Thẻ Khách Hàng</h1>
                 
                 <!-- Form thêm thẻ khách hàng -->
                 <form method="POST" action="/staff/customer-card/add">
-                    <div class="mb-3">
-                        <label for="NGAYLAP" class="form-label">Ngày Lập</label>
-                        <input type="date" class="form-control" id="NGAYLAP" name="NGAYLAP" required>
-                    </div>
-
                     <div class="mb-3">
                         <label for="NGAYHETHAN" class="form-label">Ngày Hết Hạn</label>
                         <input type="date" class="form-control" id="NGAYHETHAN" name="NGAYHETHAN" required>
@@ -38,15 +33,11 @@
                         <label for="LOAITHE" class="form-label">Loại Thẻ</label>
                         <select class="form-select" id="LOAITHE" name="LOAITHE" required>
                             <option value="" selected disabled>Loại thẻ</option>
+                            <option value="Thường">Thường</option>
                             <option value="Vàng">Vàng</option>
                             <option value="Bạc">Bạc</option>
                             <option value="Đồng">Đồng</option>
                         </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="NGAYDATHANG" class="form-label">Ngày Đặt Hàng</label>
-                        <input type="date" class="form-control" id="NGAYDATHANG" name="NGAYDATHANG">
                     </div>
 
                     <div class="mb-3">

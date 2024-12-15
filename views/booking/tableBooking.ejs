@@ -10,7 +10,7 @@
                 <select class="form-select" id="area" required>
                     <option value="" disabled selected>Chọn khu vực...</option>
                     <% for( let key in chiNhanh ) { %>
-                        <option value="<%= key %>"><%= allKhuVuc.filter(khuVuc => khuVuc.MAKHUVUC == key)[0].TENKHUVUC %></option>
+                        <option value="<%= key %>"><%= allKhuVuc.filter(khuVuc => khuVuc.MaKhuVuc == key)[0].TenKhuVuc %></option>
                     <% } %>
                 </select>
             </div>

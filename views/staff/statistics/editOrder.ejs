@@ -5,34 +5,16 @@
 
         <%- include('../../partials/staffNavbar') %>
 
-        <div class="col-md-10 p-4">
+        <div class="col-md-12 p-4">
             <div class="container mt-4">
                 <h1 class="mb-4">Sửa Phiếu Mua Hàng</h1>
                 
-                <form method="POST" action="/staff/orders/edit/<%= order.maPhieu %>">
+                <form method="POST" action="/staff/orders/edit/<%= order.MaPhieu %>">
                     <div class="row g-3">
                         <!-- Mã Phiếu (Read-Only) -->
                         <div class="col-md-12">
                             <label for="maPhieu" class="form-label">Mã Phiếu</label>
-                            <input type="text" class="form-control" id="maPhieu" name="maPhieu" value="<%= order.maPhieu %>" readonly>
-                        </div>
-
-                        <!-- Ngày Lập -->
-                        <div class="col-md-12">
-                            <label for="ngayLap" class="form-label">Ngày Lập</label>
-                            <input type="date" class="form-control" id="ngayLap" name="ngayLap" value="<%= order.ngayLap %>" required>
-                        </div>
-
-                        <!-- Mã Nhân Viên -->
-                        <div class="col-md-12">
-                            <label for="maNhanVien" class="form-label">Mã Nhân Viên</label>
-                            <input type="text" class="form-control" id="maNhanVien" name="maNhanVien" value="<%= order.maNhanVien %>" required>
-                        </div>
-
-                        <!-- Mã Khách Hàng -->
-                        <div class="col-md-12">
-                            <label for="maKhachHang" class="form-label">Mã Khách Hàng</label>
-                            <input type="text" class="form-control" id="maKhachHang" name="maKhachHang" value="<%= order.maKhachHang %>">
+                            <input type="text" class="form-control" id="maPhieu" name="maPhieu" value="<%= order.MaPhieu %>" readonly>
                         </div>
                         
                         <!-- Buttons -->

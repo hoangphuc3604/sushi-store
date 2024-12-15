@@ -5,7 +5,7 @@
 
         <%- include('../../partials/staffNavbar') %>
 
-        <div class="col-md-10 p-4">
+        <div class="col-md-12 p-4">
             <div class="container mt-4">
                 <h1 class="mb-4">Quản Lý Phiếu Đặt Món</h1>
                 
@@ -26,9 +26,6 @@
                         </div>
                         <div class="col-md-2 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary w-100">Tìm Phiếu</button>
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button type="button" class="btn btn-primary w-100" id="addBtn">Thêm Phiếu</button>
                         </div>
                     </form>
                     <div class="mt-4 table-responsive">
@@ -72,7 +69,7 @@
                                     <ul class="pagination justify-content-center" id="pagination">
                                         <!-- Previous Button -->
                                         <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-                                            <a class="page-link" href="/staff/orders/<%= currentPage - 1 %>" aria-label="Previous">
+                                            <a class="page-link" href="/staff/orders/<%= currentPage - 1 %>?MaNhanVien=<%= maNhanVien %>&MaKhachHang=<%= maKhachHang %>&NgayLap=<%= ngayLap %>" aria-label="Previous">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                         </li>
@@ -80,13 +77,13 @@
                                         <!-- Page Numbers -->
                                         <% for (let i = (currentPage >= 3 ? currentPage - 2 : 1); i <= Math.min(totalPages, currentPage + 3); i++) { %>
                                             <li class="page-item <%= currentPage == i ? 'active' : '' %>">
-                                                <a class="page-link" href="/staff/orders/<%= i %>" ><%= i %></a>
+                                                <a class="page-link" href="/staff/orders/<%= i %>?MaNhanVien=<%= maNhanVien %>&MaKhachHang=<%= maKhachHang %>&NgayLap=<%= ngayLap %>" ><%= i %></a>
                                             </li>
                                         <% } %>
             
                                         <!-- Next Button -->
                                         <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                                            <a class="page-link" href="/staff/orders/<%= currentPage + 1 %>" aria-label="Next">
+                                            <a class="page-link" href="/staff/orders/<%= currentPage + 1 %>?MaNhanVien=<%= maNhanVien %>&MaKhachHang=<%= maKhachHang %>&NgayLap=<%= ngayLap %>" aria-label="Next">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>
                                         </li>
@@ -100,29 +97,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.getElementById('addBtn').addEventListener('click', () => {
-        const data = {
-            ngayLap: document.getElementById('ngayLap').value,
-            maNhanVien: document.getElementById('maNhanVien').value,
-            maKhachHang: document.getElementById('maKhachHang').value
-        };
-
-        if (!data.ngayLap || !data.maNhanVien || !data.maKhachHang) {
-            alert('Vui lòng nhập đầy đủ thông tin');
-            return;
-        }
-
-        fetch('/staff/orders/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-    });
-</script>
 
 <%- include('../../partials/footer') %>
 
