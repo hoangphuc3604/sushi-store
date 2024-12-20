@@ -24,23 +24,23 @@ class GioHang {
         if (check.length > 0) {
             await pool
                 .request()
-                .input("maKhachHang", sql.VarChar, check[0].MAKHACHHANG)
+                .input("maKhachHang", sql.VarChar, check[0].MaKhachHang)
                 .input("maMon", sql.VarChar, food)
-                .input("soLuong", sql.VarChar, check[0].SOLUONG + 1)
+                .input("soLuong", sql.Int, check[0].SoLuong + 1)
                 .query(
-                    "UPDATE GIOHANG SET SOLUONG = @soLuong WHERE MAKHACHHANG = @maKhachHang AND MAMON = @maMon"
+                    "UPDATE GIO_HANG SET SoLuong = @soLuong WHERE MaKhachHang = @maKhachHang AND MaMon = @maMon"
                 );
             return;
         }
 
-        const khachHang = await KhachHang.getKhachHangByEmail(email);
+        const khachHang = await KhachHang.one(email);
         await pool
             .request()
-            .input("maKhachHang", sql.VarChar, khachHang.MAKHACHHANG)
+            .input("maKhachHang", sql.VarChar, khachHang.MaKhachHang)
             .input("maMon", sql.VarChar, food)
-            .input("soLuong", sql.VarChar, 1)
+            .input("soLuong", sql.Int, 1)
             .query(
-                "INSERT INTO GIOHANG (MAKHACHHANG, MAMON, SOLUONG) VALUES (@maKhachHang, @maMon, @soLuong)"
+                "INSERT INTO GIO_HANG (MaKhachHang, MaMon, SoLuong) VALUES (@maKhachHang, @maMon, @soLuong)"
             );
     }
 

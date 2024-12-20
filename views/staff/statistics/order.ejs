@@ -43,13 +43,13 @@
                                 <% if (orders.length > 0) { %>
                                     <% orders.forEach(order => { %>
                                         <tr>
-                                            <td><%= order.maPhieu %></td>
-                                            <td><%= order.ngayLap %></td>
-                                            <td><%= order.maNhanVien %></td>
-                                            <td><%= order.maKhachHang || 'N/A' %></td>
+                                            <td><%= order.MaPhieu %></td>
+                                            <td><%= order.NgayLap %></td>
+                                            <td><%= order.MaNhanVien %></td>
+                                            <td><%= order.MaKhachHang || 'N/A' %></td>
                                             <td>
-                                                <a href="/staff/orders/edit/<%= order.maPhieu %>" class="btn btn-warning btn-sm">Sửa</a>
-                                                <form method="GET" action="/staff/orders/delete/<%= order.maPhieu %>" style="display:inline;">
+                                                <a href="/staff/orders/edit/<%= order.MaPhieu %>" class="btn btn-warning btn-sm">Sửa</a>
+                                                <form method="GET" action="/staff/orders/delete/<%= order.MaPhieu %>" style="display:inline;">
                                                     <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
                                                 </form>
                                             </td>

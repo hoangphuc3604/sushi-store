@@ -4,7 +4,7 @@ const config = {
   user: "sa",
   password: "root",
   server: "localhost",
-  database: "QLCHSS",
+  database: "SushiRestaurant",
   options: {
     encrypt: false,
     trustServerCertificate: true,

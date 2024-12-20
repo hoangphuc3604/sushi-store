@@ -40,12 +40,12 @@
                                 <% if (invoices.length > 0) { %>
                                     <% invoices.forEach(invoice => { %>
                                         <tr>
-                                            <td><%= invoice.maHoaDon %></td>
-                                            <td><%= invoice.tongTien %></td>
-                                            <td><%= invoice.soTienGiam || '0' %></td>
-                                            <td><%= invoice.thanhTien %></td>
-                                            <td><%= invoice.maPhieu %></td>
-                                            <td><%= invoice.maChuongTrinh || 'N/A' %></td>
+                                            <td><%= invoice.MaHoaDon %></td>
+                                            <td><%= invoice.TongTien %></td>
+                                            <td><%= invoice.SoTienGiam || '0' %></td>
+                                            <td><%= invoice.ThanhTien %></td>
+                                            <td><%= invoice.MaPhieu %></td>
+                                            <td><%= invoice.MaChuongTrinh || 'N/A' %></td>
                                         </tr>
                                     <% }) %>
                                 <% } else { %>

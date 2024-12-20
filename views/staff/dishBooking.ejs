@@ -50,6 +50,7 @@
                     <div id="existing-customer" class="mb-3" style="display: none;">
                       <label for="memberCard" class="form-label">Mã Khách Hàng:</label>
                       <input type="text" class="form-control" id="memberCard" name="memberCard" placeholder="Nhập mã khách hàng">
+                      <button class="btn btn-primary mt-4" id="checkCustomerCard">Kiểm tra</button>
                     </div>
 
                     <!-- Form đăng ký thông tin (hiển thị mặc định) -->
@@ -170,6 +171,33 @@
 </div>
 
 <script>
+  const checkCustomerCardBtn = document.getElementById('checkCustomerCard');
+  checkCustomerCardBtn.addEventListener('click', async () => {
+    fetch('/staff/customer-card', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ card: document.getElementById('memberCard').value }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        const toastEl = document.getElementById('toastMessage');
+        const toastContent = document.getElementById('toastContent');
+  
+        toastContent.innerHTML = `<i class="fa-solid fa-circle-${data.type === 'success' ? 'check' : data.type === 'danger' ? 'xmark' : 'exclamation'}"></i> ${data.message}`;
+  
+        toastEl.classList.remove('text-bg-primary', 'text-bg-danger', 'text-bg-warning', 'text-bg-info');
+        toastEl.classList.add(`text-bg-${data.type}`);
+  
+        toastEl.style.display = 'block';
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+      })
+  });
+</script>
+
+<script>
     function toggleCustomerFields() {
       const membershipSelect = document.getElementById("membership");
       const existingCustomer = document.getElementById("existing-customer");
@@ -198,7 +226,7 @@
       const quantityInput = document.getElementById('quantity');
 
       const dishName = dishSelect.value;
-      const dishId = parseInt(dishSelect.selectedOptions[0].dataset.id || 0);
+      const dishId = dishSelect.selectedOptions[0].dataset.id
       const dishPrice = parseInt(dishSelect.selectedOptions[0].dataset.price || 0);
       const quantity = parseInt(quantityInput.value || 0);
 
@@ -274,7 +302,7 @@
     // Xuất hóa đơn
     checkoutBtn.addEventListener('click', () => {
       const memberCard = document.getElementById('memberCard').value.trim();
-      const discount = memberCard ? totalPrice * 0.1 : 0; // 10% giảm giá nếu có thẻ
+      const discount = 0;
       const totalAfter = totalPrice - discount;
 
       // Hiển thị hóa đơn
@@ -338,8 +366,24 @@
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ data }),
       })
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            const toastEl = document.getElementById('toastMessage');
+            const toastContent = document.getElementById('toastContent');
+
+            toastContent.innerHTML = `<i class="fa-solid fa-circle-${data.type === 'success' ? 'check' : data.type === 'danger' ? 'xmark' : 'exclamation'}"></i> ${data.message}`;
+
+            toastEl.classList.remove('text-bg-primary', 'text-bg-danger', 'text-bg-warning', 'text-bg-info');
+            toastEl.classList.add(`text-bg-${data.type}`);
+
+            toastEl.style.display = 'block';
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+          }
+        });
       
     });
 

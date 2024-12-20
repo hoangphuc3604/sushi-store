@@ -1,4 +1,6 @@
 const KhuVuc = require("../models/khuVucModel");
+const ChiNhanh = require("../models/chiNhanhModel");
+const NhanVien = require("../models/nhanVienModel");
 class adminController {
   // [GET] /admin
   index(req, res) {
@@ -17,7 +19,7 @@ class adminController {
     const branches = {};
     for (const cur of areas) {
       const chiNhanhs = await KhuVuc.chiNhanhs(cur.MaKhuVuc);
-      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn.TenChiNhanh);
+      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn);
     }
 
     res.render("admin/revenue", {
@@ -28,22 +30,25 @@ class adminController {
       startDate,
       endDate,
       revenueStats: [],
+      selectedArea: null,
+      selectedBranch: null,
+      selectedType: null,
     });
   }
 
   // [POST] /admin/revenue
   async getRevenueStats(req, res) {
     const { email, role } = req;
-    const { startDate, endDate, branchId } = req.body;
+    const { startDate, endDate, branchId, statType, area } = req.body;
 
     const areas = await KhuVuc.all();
     const branches = {};
     for (const cur of areas) {
       const chiNhanhs = await KhuVuc.chiNhanhs(cur.MaKhuVuc);
-      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn.TenChiNhanh);
+      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn);
     }
 
-    const revenueStats = [];
+    const revenueStats = await ChiNhanh.revenueStats(branchId, startDate, endDate, statType);
 
     res.render("admin/revenue", {
       role,
@@ -53,6 +58,9 @@ class adminController {
       startDate,
       endDate,
       revenueStats,
+      selectedArea: area,
+      selectedBranch: await ChiNhanh.one(branchId),
+      selectedType: statType,
     });
   }
 
@@ -67,47 +75,12 @@ class adminController {
     const branches = {};
     for (const cur of areas) {
       const chiNhanhs = await KhuVuc.chiNhanhs(cur.MaKhuVuc);
-      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn.TenChiNhanh);
+      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn);
     }
 
-    const revenueStats = [
-      {
-        dishName: "Mì xào",
-        totalRevenue: 1000000,
-        quantitySold: 10,
-      },
-      {
-        dishName: "Phở",
-        totalRevenue: 2000000,
-        quantitySold: 20,
-      },
-      {
-        dishName: "Cơm rang",
-        totalRevenue: 3000000,
-        quantitySold: 30,
-      },
-    ];
-
-    let highest, lowest;
-    revenueStats.forEach((item) => {
-      if (!highest || item.totalRevenue > highest) {
-        highest = item.totalRevenue;
-      }
-      if (!lowest || item.totalRevenue < lowest) {
-        lowest = item.totalRevenue;
-      }
-    });
-
+    const revenueStats = [];
     let highestDishes = [],
       lowestDishes = [];
-    revenueStats.forEach((item) => {
-      if (item.totalRevenue === highest) {
-        highestDishes.push(item);
-      }
-      if (item.totalRevenue === lowest) {
-        lowestDishes.push(item);
-      }
-    });
 
     res.render("admin/menuStats", {
       role,
@@ -120,59 +93,26 @@ class adminController {
       areas,
       highestDishes,
       lowestDishes,
+      selectedArea: null,
+      selectedBranch: null,
     });
   }
 
   // [POST] /admin/menu-stats
   async getMenuStats(req, res) {
     const { email, role } = req;
-    const { startDate, endDate, branch, area } = req.body;
+    const { startDate, endDate, branchId, area } = req.body;
 
     const areas = await KhuVuc.all();
     const branches = {};
     for (const cur of areas) {
       const chiNhanhs = await KhuVuc.chiNhanhs(cur.MaKhuVuc);
-      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn.TenChiNhanh);
+      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn);
     }
 
-    const revenueStats = [
-      {
-        dishName: "Mì xào",
-        totalRevenue: 1000000,
-        quantitySold: 10,
-      },
-      {
-        dishName: "Phở",
-        totalRevenue: 2000000,
-        quantitySold: 20,
-      },
-      {
-        dishName: "Cơm rang",
-        totalRevenue: 3000000,
-        quantitySold: 30,
-      },
-    ];
-
-    let highest, lowest;
-    revenueStats.forEach((item) => {
-      if (!highest || item.totalRevenue > highest) {
-        highest = item.totalRevenue;
-      }
-      if (!lowest || item.totalRevenue < lowest) {
-        lowest = item.totalRevenue;
-      }
-    });
-
-    let highestDishes = [],
-      lowestDishes = [];
-    revenueStats.forEach((item) => {
-      if (item.totalRevenue === highest) {
-        highestDishes.push(item);
-      }
-      if (item.totalRevenue === lowest) {
-        lowestDishes.push(item);
-      }
-    });
+    const revenueStats = await ChiNhanh.menuStats(branchId ? branchId : null, startDate, endDate);
+    const highestDishes = await ChiNhanh.highestDishes(branchId ? branchId : null, startDate, endDate);
+    const lowestDishes = await ChiNhanh.lowestDishes(branchId ? branchId : null, startDate, endDate);
 
     res.render("admin/menuStats", {
       role,
@@ -185,6 +125,10 @@ class adminController {
       areas,
       highestDishes,
       lowestDishes,
+      selectedArea: area, 
+      selectedBranch: await ChiNhanh.one(branchId),
+      startDate,
+      endDate
     });
   }
 
@@ -196,7 +140,7 @@ class adminController {
     const branches = {};
     for (const cur of areas) {
       const chiNhanhs = await KhuVuc.chiNhanhs(cur.MaKhuVuc);
-      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn.TenChiNhanh);
+      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn);
     }
 
     const employees = [];
@@ -219,23 +163,10 @@ class adminController {
     const branches = {};
     for (const cur of areas) {
       const chiNhanhs = await KhuVuc.chiNhanhs(cur.MaKhuVuc);
-      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn.TenChiNhanh);
+      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn);
     }
 
-    const employees = [
-      {
-        id: 1,
-        name: "Nguyễn Văn A",
-      },
-      {
-        id: 2,
-        name: "Trần Thị B",
-      },
-      {
-        id: 3,
-        name: "Lê Văn C",
-      },
-    ];
+    const employees = await ChiNhanh.employees(branch);
 
     res.render("admin/transferStaff", {
       role,
@@ -247,11 +178,24 @@ class adminController {
   }
 
   // [POST] /admin/staff
-  transStaff(req, res) {
+  async transStaff(req, res) {
     const { email, role } = req;
-    const { id, branch } = req.body;
-    console.log(id, branch);
-    res.redirect("/admin/staff");
+    const { MaBoPhan, id, Luong } = req.body;
+    console.log(req.body);
+    const nv = await NhanVien.one(id);
+    if (!(await NhanVien.transfer(id, nv.HoTen, MaBoPhan, Luong))) {
+      const toast = {
+        message: "Không thể chuyển nhân viên này",
+        type: "danger",
+      };
+      return res.render("admin/adminDashboard", { role, title: "Trang quản trị", toast });
+    } else {
+      const toast = {
+        message: "Chuyển nhân viên thành công",
+        type: "success",
+      };
+      return res.render("admin/adminDashboard", { role, title: "Trang quản trị", toast });
+    }
   }
 
   // [GET] /admin/salary
@@ -261,7 +205,7 @@ class adminController {
     const branches = {};
     for (const cur of areas) {
       const chiNhanhs = await KhuVuc.chiNhanhs(cur.MaKhuVuc);
-      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn.TenChiNhanh);
+      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn);
     }
 
     res.render("admin/info", {
@@ -282,44 +226,29 @@ class adminController {
     const branches = {};
     for (const cur of areas) {
       const chiNhanhs = await KhuVuc.chiNhanhs(cur.MaKhuVuc);
-      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn.TenChiNhanh);
+      branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn);
     }
 
-    const employees = [
-      {
-        MANHANVIEN: 1,
-        HOTEN: "Nguyễn Văn A",
-        NGAYSINH: "1999-01-01",
-        GIOITINH: "Nam",
-        SODIENTHOAI: "0123456789",
-        NGAYVAOLAM: "2021-01-01",
-        LUONG: 10000000,
-        DIACHI: "Hà Nội",
-        MABOPHAN: "BP001",
-      },
-      {
-        MANHANVIEN: 2,
-        HOTEN: "Trần Thị B",
-        NGAYSINH: "1999-01-01",
-        GIOITINH: "Nữ",
-        SODIENTHOAI: "0123456789",
-        NGAYVAOLAM: "2021-01-01",
-        LUONG: 10000000,
-        DIACHI: "Hà Nội",
-        MABOPHAN: "BP001",
-      },
-      {
-        MANHANVIEN: 3,
-        HOTEN: "Lê Văn C",
-        NGAYSINH: "1999-01-01",
-        GIOITINH: "Nam",
-        SODIENTHOAI: "0123456789",
-        NGAYVAOLAM: "2021-01-01",
-        LUONG: 10000000,
-        DIACHI: "Hà Nội",
-        MABOPHAN: "BP001",
-      },
-    ];
+    let employees = [];
+    if (!branch) {
+      employees = (await NhanVien.all()).map((nv) => {
+        return {
+          ...nv, 
+          NgaySinh: new Date(nv.NgaySinh).toISOString().split("T")[0],
+          NgayVaoLam: new Date(nv.NgayVaoLam).toISOString().split("T")[0],
+          NgayNghiViec: nv.NgayNghiViec ? new Date(nv.NgayNghiViec).toISOString().split("T")[0] : null,
+        }
+      });
+    } else {
+      employees = (await ChiNhanh.employees(branch)).map((nv) => {
+        return {
+          ...nv, 
+          NgaySinh: new Date(nv.NgaySinh).toISOString().split("T")[0],
+          NgayVaoLam: new Date(nv.NgayVaoLam).toISOString().split("T")[0],
+          NgayNghiViec: nv.NgayNghiViec ? new Date(nv.NgayNghiViec).toISOString().split("T")[0] : null,
+        }
+      });
+    }
 
     res.render("admin/info", {
       role,
@@ -334,18 +263,10 @@ class adminController {
   async getInfoDetail(req, res) {
     const { email, role } = req;
     const { id } = req.params;
-
-    const employee = {
-      MANHANVIEN: 1,
-      HOTEN: "Nguyễn Văn A",
-      NGAYSINH: "1999-01-01",
-      GIOITINH: "Nam",
-      SODIENTHOAI: "0123456789",
-      NGAYVAOLAM: "2021-01-01",
-      LUONG: 10000000,
-      DIACHI: "Hà Nội",
-      MABOPHAN: "BP001",
-    };
+    const employee = await NhanVien.one(id);
+    employee.NgaySinh = new Date(employee.NgaySinh).toISOString().split("T")[0];
+    employee.NgayVaoLam = new Date(employee.NgayVaoLam).toISOString().split("T")[0];
+    employee.NgayNghiViec = employee.NgayNghiViec ? new Date(employee.NgayNghiViec).toISOString().split("T")[0] : null;
 
     res.render("admin/updateEmployee", {
       role,
@@ -358,33 +279,25 @@ class adminController {
   async updateInfo(req, res) {
     const { email, role } = req;
     const { id } = req.params;
-    const {
-      HOTEN,
-      NGAYSINH,
-      GIOITINH,
-      SODIENTHOAI,
-      NGAYVAOLAM,
-      LUONG,
-      DIACHI,
-      MABOPHAN,
-    } = req.body;
+    const nv = await NhanVien.one(id);
+    req.body.MaBoPhan = nv.MaBoPhan;
 
-    console.log(
-      id,
-      HOTEN,
-      NGAYSINH,
-      GIOITINH,
-      SODIENTHOAI,
-      NGAYVAOLAM,
-      LUONG,
-      DIACHI,
-      MABOPHAN
-    );
-
+    await NhanVien.update(id, req.body);
     res.redirect("/admin/info");
   }
+
   async deleteInfo(req, res) {
-    
+    const { id } = req.params;
+    const { role } = req;
+
+    if (!await NhanVien.delete(id)) {
+      const toast = {
+        message: "Không thể xóa nhân viên này",
+        type: "danger",
+      };
+      return res.render("admin/adminDashboard", { role, title: "Trang quản trị", toast });
+    }
+    res.redirect("/admin/info");
   }
 }
 

@@ -36,7 +36,7 @@
     
     
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow p-3">
       <div class="container">
         <div class="logo-container">
           <a href="/" class="navbar-brand">
@@ -52,10 +52,12 @@
         </div>
 
         <!-- Thanh tìm kiếm ở giữa -->
-        <form
+        <% if (role !== 'admin') { %>
+          <form
           class="d-flex search-form"
           action="<%= role === 'customer' ? '/search' : '/staff/dish-search/1 ' %>"
           method="POST"
+          id="searchForm"
         >
           <input
             class="form-control me-2"
@@ -64,10 +66,11 @@
             aria-label="Search"
             name="query"
           />
-          <button class="btn btn-outline-success" type="submit">
+          <button class="btn btn-outline-success" type="submit" form="searchForm">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </form>
+        <% } %>
 
         <% if (role === "customer") { %>
         <button
@@ -90,9 +93,6 @@
             </li>
             <li class="nav-item fw-semibold">
               <a class="nav-link" href="/booking/food/1">Đặt món</a>
-            </li>
-            <li class="nav-item fw-semibold">
-              <a class="nav-link" href="#contact">Liên Hệ</a>
             </li>
             <% } %>
             <li>

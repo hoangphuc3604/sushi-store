@@ -12,12 +12,12 @@
                 <form class="row g-3 align-items-center mb-4" method="POST" action="/staff/search">
                     <div class="col-md-3">
                         <label for="searchName" class="form-label">Tìm kiếm nhân viên</label>
-                        <input type="text" class="form-control" id="searchName" name="query" placeholder="Nhập từ khóa">
+                        <input type="text" class="form-control" id="searchName" name="query" value="" placeholder="Nhập từ khóa">
                     </div>
                     <div class="col-md-3">
                         <label for="area" class="form-label">Chọn Khu Vực</label>
-                        <select class="form-select" id="area" name="area">
-                            <option value="all">Tất cả</option>
+                        <select class="form-select" id="area" name="area" required>
+                            <option disabled selected>Tất cả</option>
                             <% allKhuVuc.forEach(k => { %>
                                 <option value="<%= k.MaKhuVuc %>"><%= k.TenKhuVuc %></option>
                             <% }) %>
@@ -25,8 +25,8 @@
                     </div>
                     <div class="col-md-3">
                         <label for="branch" class="form-label">Chọn chi nhánh</label>
-                        <select disabled class="form-select" id="branch" name="branch">
-                            <option value="">Tất cả</option>
+                        <select disabled class="form-select" id="branch" name="branch" required>
+                            <option disabled selected value="all">Tất cả</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -39,28 +39,26 @@
                     <table class="table table-bordered">
                         <thead class="">
                             <tr>
+                                <th>STT</th>
                                 <th>Mã Nhân Viên</th>
                                 <th>Tên Nhân Viên</th>
-                                <th>Chi Nhánh</th>
                                 <th>Giới tính</th>
                                 <th>Số Điện Thoại</th>
                                 <th>Địa chỉ</th>
                                 <th>Ngày vào làm</th>
-                                <th>Lương</th>
                             </tr>
                         </thead>
                         <tbody>
                             <% if (employees.length > 0) { %>
-                                <% employees.forEach(employee => { %>
+                                <% employees.forEach((employee, i) => { %>
                                     <tr>
+                                        <td><%= i + 1 %></td>
                                         <td><%= employee.MaNhanVien %></td>
                                         <td><%= employee.HoTen %></td>
-                                        <td><%= employee.MaChiNhanh %></td>
                                         <td><%= employee.GioiTinh %></td>
                                         <td><%= employee.SoDienThoai %></td>
                                         <td><%= employee.DiaChi %></td>
                                         <td><%= employee.NgayVaoLam %></td>
-                                        <td><%= employee.Luong %></td>
                                     </tr>
                                 <% }) %>
                             <% } else { %>

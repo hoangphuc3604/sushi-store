@@ -39,20 +39,22 @@
           <table class="table table-bordered mt-3">
             <thead>
               <tr>
+                <th>STT</th>
                 <th>Mã NV</th>
                 <th>Họ Tên</th>
-                <th>Chức Vụ</th>
+                <th>Bộ Phận</th>
                 <th>Hành Động</th>
               </tr>
             </thead>
             <tbody>
-              <% employees.forEach(employee => { %>
+              <% employees.forEach((employee, i) => { %>
                 <tr>
-                  <td><%= employee.id %></td>
-                  <td><%= employee.name %></td>
-                  <td><%= employee.position %></td>
+                  <td><%= i + 1 %></td>
+                  <td><%= employee.MaNhanVien %></td>
+                  <td><%= employee.HoTen %></td>
+                  <td><%= employee.MaBoPhan %></td>
                   <td>
-                    <button id="transferBtn" data-id="<%= employee.id %>" class="btn btn-success btn-sm ms-2">Chuyển chi nhánh</button>
+                    <button id="transferBtn" data-id="<%= employee.MaNhanVien %>" class="btn btn-success btn-sm ms-2">Chuyển chi nhánh</button>
                   </td>
                 </tr>
               <% }) %>
@@ -68,23 +70,23 @@
                     <h5 class="card-title">Chuyển Nhân Viên</h5>
                     <p><strong>Tên nhân viên: </strong><span id="empName"></span></p>
                     <p><strong>Chức vụ: </strong><span id="position"></span></p>
-                    <input type="number" id="empId" name="id" hidden>
+                    <input type="text" id="empId" name="id" hidden>
                     <div class="container">
-                        <div class="col-md-3">
-                            <label for="new-area" class="form-label">Khu Vực Mới</label>
-                            <select class="form-select" id="new-area" name="area">
-                            <option value="" disabled selected>Chọn Khu Vực</option>
-                            <% for (let i = 0; i < areas.length; i++) { %>
-                                <option value="<%= areas[i].MaKhuVuc %>"><%= areas[i].TenKhuVuc %></option>
-                            <% } %>
-                            </select>
-                        </div>
-                
-                        <div class="col-md-3">
-                            <label for="new-branch" class="form-label">Chi Nhánh Mới</label>
-                            <select class="form-select" id="new-branch" name="branch" disabled>
-                            <option value="" disabled selected>Chọn Chi Nhánh</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!-- Input mã bộ phận mới -->
+                                <div class="mb-3">
+                                  <label for="MaBoPhan">Mã bộ phận mới</label>
+                                  <input type="text" class="form-control" id="MaBoPhan" name="MaBoPhan" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                              <!-- Input lương mới -->
+                              <div class="mb-3">
+                                <label for="Luong">Lương mới</label>
+                                <input type="number" class="form-control" id="Luong" name="Luong" required>
+                              </div>
+                          </div>
                         </div>
                 
                         <div class="col-md-2">
@@ -114,41 +116,23 @@
         branchSelect.innerHTML = `<option value="" disabled selected>Chọn chi nhánh...</option>`;
         branches[selectedArea].forEach(branch => {
             const option = document.createElement('option');
-            option.value = branch;
-            option.textContent = branch;
+            option.value = branch.MaChiNhanh;
+            option.textContent = branch.TenChiNhanh;
             branchSelect.appendChild(option);
         });
     });
 
-    const newAreaSelect = document.getElementById('new-area');
-    const newBranchSelect = document.getElementById('new-branch');
-
-    newAreaSelect.addEventListener('change', () => {
-        newBranchSelect.disabled = false;
-
-        const branches = JSON.parse('<%- JSON.stringify(branches) %>');
-
-        const selectedArea = newAreaSelect.value;
-        newBranchSelect.innerHTML = `<option value="" disabled selected>Chọn chi nhánh...</option>`;
-        branches[selectedArea].forEach(branch => {
-            const option = document.createElement('option');
-            option.value = branch;
-            option.textContent = branch;
-            newBranchSelect.appendChild(option);
-        });
-    });
-
     const employees = JSON.parse('<%- JSON.stringify(employees) %>');
+    console.log(employees);
 
     transferBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            const id = parseInt(btn.getAttribute('data-id'));
-            const employee = employees.find(emp => emp.id === id);
-            console.log(employee);
+            const id = btn.getAttribute('data-id')
+            const employee = employees.find(emp => emp.MaNhanVien === id);
 
-            document.getElementById('empName').textContent = employee.name;
-            document.getElementById('position').textContent = employee.position;
-            document.getElementById('empId').value = employee.id;
+            document.getElementById('empName').textContent = employee.HoTen;
+            document.getElementById('position').textContent = employee.MaBoPhan;
+            document.getElementById('empId').value = employee.MaNhanVien;
 
             document.querySelector('.card').classList.remove('d-none');
         });

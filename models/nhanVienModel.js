@@ -1,5 +1,4 @@
 const { sql, poolPromise } = require("../utils/db");
-const { id_creator } = require("../utils/idCreator");
 
 class NhanVien {
   static async all() {
@@ -8,13 +7,22 @@ class NhanVien {
     return result.recordset;
   }
 
+  static async getMaNhanVienByEmail(Email) {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("Email", sql.VarChar, Email)
+      .query("SELECT MaNhanVien FROM STAFF_APP WHERE Email = @Email");
+
+    return result.recordset[0].MaNhanVien;
+  }
+
   static async one(maNhanVien) {
     const pool = await poolPromise;
     const result = await pool
       .request()
       .input("maNhanVien", sql.VarChar, maNhanVien)
-      .query("SELECT * FROM NHAN_VIEN WHERE MaNhanVien = @maNhanVien");
-
+      .query("SELECT NV.*, CN.MaChiNhanh FROM NHAN_VIEN NV JOIN BO_PHAN BP ON NV.MaBoPhan = BP.MaBoPhan JOIN CHI_NHANH CN ON BP.MaChiNhanh = CN.MaChiNhanh WHERE NV.MaNhanVien = @maNhanVien");
     return result.recordset[0];
   }
 
@@ -23,7 +31,6 @@ class NhanVien {
 
     await pool
       .request()
-      .input("maNhanVien", sql.VarChar, id_creator("NV"))
       .input("tenNhanVien", sql.NVarChar, nhanVien.hoTen)
       .input("maBoPhan", sql.VarChar, nhanVien.maBoPhan)
       .execute("sp_ThemNhanVien");
@@ -36,45 +43,85 @@ class NhanVien {
     await pool
       .request()
       .input("maNhanVien", sql.VarChar, maNhanVien)
-      .input("tenNhanVien", sql.NVarChar, nhanVien.hoTen)
-      .input("maBoPhan", sql.VarChar, nhanVien.maBoPhan)
+      .input("tenNhanVien", sql.NVarChar, nhanVien.HoTen)
+      .input("maBoPhan", sql.VarChar, nhanVien.MaBoPhan)
+      .input("Luong", sql.Int, nhanVien.Luong)
       .execute("sp_SuaNhanVien");
 
     return await this.one(maNhanVien);
   }
 
   static async delete(maNhanVien) {
-    const pool = await poolPromise;
-    await pool
-      .request()
-      .input("maNhanVien", sql.VarChar, maNhanVien)
-      .execute("sp_XoaNhanVien");
+    try {
+      const pool = await poolPromise;
+      await pool
+        .request()
+        .input("maNhanVien", sql.VarChar, maNhanVien)
+        .execute("sp_XoaNhanVien");
+    } catch (error) {
+      console.log(error.message);
+      return false;
+    }
   }
 
-  static async addOrder(maNhanVien, maKhachHang, maMon, soLuong) {
+  static async addOrder(maNhanVien, maKhachHang) {
     const pool = await poolPromise;
     await pool
       .request()
-      .input("maPhieu", sql.VarChar, id_creator("PMH"))
       .input("maNhanVien", sql.VarChar, maNhanVien)
       .input("ngayLap", sql.DateTime, new Date())
       .input("maKhachHang", sql.VarChar, maKhachHang)
-      .input("maMon", sql.VarChar, maMon)
-      .input("soLuong", sql.Int, soLuong)
       .execute("sp_ThemPhieuDatMon");
     
-    return await this.one(maNhanVien);
+    const result = await pool
+      .request()
+      .input("maNhanVien", sql.VarChar, maNhanVien)
+      .input("maKhachHang", sql.VarChar, maKhachHang)
+      .input("ngayDat", sql.DateTime, new Date())
+      .execute("sp_TimPhieuDat");
+
+    return result.recordset[0];
+  }
+
+  static async addOrderDetail(maPhieuDatMon, maMonAn, soLuong) {
+    const pool = await poolPromise;
+    await pool
+      .request()
+      .input("maPhieuDatMon", sql.VarChar, maPhieuDatMon)
+      .input("maMonAn", sql.VarChar, maMonAn)
+      .input("soLuong", sql.Int, soLuong)
+      .execute("sp_ThemChiTietPhieuDatMon");
+    
+    return await this.one(maPhieuDatMon);
   }
 
   static async search(maChiNhanh, query) {
+    maChiNhanh = maChiNhanh || "all";
     const pool = await poolPromise;
     const result = await pool
       .request()
       .input("query", sql.NVarChar, query)
       .input("maChiNhanh", sql.VarChar, maChiNhanh)
       .execute("sp_TimKiemNhanVien");
-
     return result.recordset;
+  }
+
+  static async transfer(maNhanVien, hoTen, maBoPhan, Luong) {
+    try {
+      const pool = await poolPromise;
+      await pool
+        .request()
+        .input("maNhanVien", sql.VarChar, maNhanVien)
+        .input("tenNhanVien", sql.NVarChar, hoTen)
+        .input("maBoPhan", sql.VarChar, maBoPhan)
+        .input("Luong", sql.Int, Luong)
+        .execute("sp_ChuyenNhanVien");
+
+      return true;
+    } catch (error) {
+      console.log(error.message);
+      return false;
+    }
   }
 }
 

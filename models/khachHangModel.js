@@ -1,5 +1,4 @@
 const { sql, poolPromise } = require("../utils/db");
-const { createId } = require("../utils/idCreator");
 
 class KhachHang {
     static async add(khachHang) {
@@ -7,7 +6,6 @@ class KhachHang {
 
         await pool
             .request()
-            .input("maKhach", sql.VarChar, createId("KH"))
             .input("tenKhach", sql.NVarChar, khachHang.tenKhachHang)
             .input("email", sql.VarChar, khachHang.email)
             .input("soDienThoai", sql.VarChar, khachHang.soDienThoai)
@@ -27,18 +25,39 @@ class KhachHang {
         return result.recordset[0];
     }
 
+    static async oneById(maKhachHang) {
+        const pool = await poolPromise;
+
+        const result = await pool
+            .request()
+            .input("maKhachHang", sql.VarChar, maKhachHang)
+            .query("SELECT * FROM KHACH_HANG WHERE MaKhachHang = @maKhachHang");
+
+        return result.recordset[0];
+    }
+
     static async bill(maKhachHang, ngayLap) {
         const pool = await poolPromise;
 
         maKhachHang = maKhachHang || null;
+        ngayLap = ngayLap || null;
 
-        const result = await pool
+        console.log(maKhachHang, ngayLap);
+
+        try {
+            const result = await pool
             .request()
             .input("maKhachHang", sql.VarChar, maKhachHang)
             .input("ngay", sql.DateTime, ngayLap)
             .execute("sp_TimHoaDon");
 
-        return result.recordset;
+            console.log(result.recordset);
+
+            return result.recordset;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
     }
 
     static async allTheKhachHang() {
@@ -67,8 +86,9 @@ class KhachHang {
 
         const result = await pool
             .request()
-            .input("query", sql.NVarChar, query)
-            .execute("sp_TimKiemTheKhachHang");
+            .input("maThe", sql.VarChar, query)
+            .input("maKhachHang", sql.VarChar, null)
+            .execute("sp_TimTheKhachHang");
 
         return result.recordset;
     }
@@ -82,18 +102,23 @@ class KhachHang {
             .execute("sp_TaoTheKhachHang");
     }
 
-    static async updateTheKhachHang(maThe, ngayLap, ngayHetHan, diemTichLuy, trangThai, maKhachHang) {
-        const pool = await poolPromise;
+    static async updateTheKhachHang(maThe, ngayHetHan, diemTichLuy, trangThai, loaiThe) {
+        try {
+            const pool = await poolPromise;
 
-        await pool
-            .request()
-            .input("maThe", sql.VarChar, maThe)
-            .input("ngayLap", sql.DateTime, ngayLap)
-            .input("ngayHetHan", sql.DateTime, ngayHetHan)
-            .input("diemTichLuy", sql.Int, diemTichLuy)
-            .input("trangThai", sql.Bit, trangThai)
-            .input("maKhachHang", sql.VarChar, maKhachHang)
-            .execute("sp_CapNhatTheKhachHang");
+            await pool
+                .request()
+                .input("maThe", sql.VarChar, maThe)
+                .input("ngayHetHan", sql.DateTime, ngayHetHan)
+                .input("diemTichLuy", sql.Int, diemTichLuy)
+                .input("trangThai", sql.NVarChar, trangThai)
+                .input("loaiThe", sql.NVarChar, loaiThe)
+                .execute("sp_SuaTheKhachHang");
+            
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 
     static async deleteTheKhachHang(maThe) {
@@ -105,7 +130,16 @@ class KhachHang {
             .execute("sp_XoaTheKhachHang");
     }
 
+    static async oneByTheKhachHang(maThe) {
+        const pool = await poolPromise;
 
+        const result = await pool
+            .request()
+            .input("maThe", sql.VarChar, maThe)
+            .execute("sp_TimTheKhachHang");
+
+        return result.recordset[0];
+    }
 }
 
 module.exports = KhachHang;

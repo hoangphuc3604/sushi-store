@@ -15,11 +15,6 @@
     >
       <div class="card p-4 shadow" style="width: 30rem">
         <h2 class="text-center mb-4">Đăng ký tài khoản</h2>
-
-        <% if (error) { %>
-        <div class="alert alert-danger" role="alert"><%= error %></div>
-        <% } %>
-
         <form action="/auth/register" method="POST">
           <!-- Họ và tên -->
           <div class="mb-3">
@@ -42,6 +37,18 @@
               id="email"
               name="email"
               placeholder="Email"
+              required
+            />
+          </div>
+          <!-- Mật khẩu -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Mật khẩu</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="Mật khẩu"
               required
             />
           </div>
@@ -79,7 +86,7 @@
                         class="form-check-input" 
                         id="genderMale" 
                         name="gender" 
-                        value="male" 
+                        value="Nam" 
                         required
                     />
                     <label class="form-check-label" for="genderMale">Nam</label>
@@ -90,7 +97,7 @@
                         class="form-check-input" 
                         id="genderFemale" 
                         name="gender" 
-                        value="female" 
+                        value="Nữ" 
                         required
                     />
                     <label class="form-check-label" for="genderFemale">Nữ</label>
@@ -101,37 +108,13 @@
                         class="form-check-input" 
                         id="genderOther" 
                         name="gender" 
-                        value="other" 
+                        value="Khác" 
                         required
                     />
                     <label class="form-check-label" for="genderOther">Khác</label>
                 </div>
             </div>
           </div>  
-          <!-- Mật khẩu -->
-          <div class="mb-3">
-            <label for="password" class="form-label">Mật khẩu</label>
-            <input
-              type="password"
-              class="form-control"
-              id="password"
-              name="password"
-              placeholder="Mật khẩu"
-              required
-            />
-          </div>
-          <!-- Ảnh đại diện -->
-          <div class="mb-3">
-            <label for="image" class="form-label">Ảnh đại diện</label>
-            <input
-              type="text"
-              class="form-control"
-              id="image"
-              name="image"
-              placeholder="Link ảnh đại diện"
-              required
-            />
-          </div>
           <!-- Nút đăng ký -->
           <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
         </form>

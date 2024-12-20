@@ -24,7 +24,7 @@
                     <!-- Chọn chi nhánh -->
                     <label for="branch" class="form-label">Chi Nhánh</label>
                     <select disabled class="form-select" id="branch" name="branch">
-                        <option value="all" selected>Tất Cả</option>
+                        <option value="" selected>Tất Cả</option>
                     </select>
                 </div>
 
@@ -46,7 +46,6 @@
               <th>Địa Chỉ</th>
               <th>Mã bộ phận</th>
               <th>Ngày Vào Làm</th>
-              <th>Lương</th>
               <th>Hành Động</th>
             </tr>
           </thead>
@@ -59,19 +58,18 @@
               <% employees.forEach((employee, index) => { %>
                 <tr>
                   <td><%= index + 1 %></td>
-                  <td><%= employee.HOTEN %></td>
-                  <td><%= employee.NGAYSINH %></td>
-                  <td><%= employee.GIOITINH %></td>
-                  <td><%= employee.SODIENTHOAI %></td>
-                  <td><%= employee.DIACHI %></td>
-                  <td><%= employee.MABOPHAN %></td>
-                  <td><%= employee.NGAYVAOLAM %></td>
-                  <td><%= employee.LUONG.toLocaleString() %> VND</td>
+                  <td><%= employee.HoTen %></td>
+                  <td><%= employee.NgaySinh %></td>
+                  <td><%= employee.GioiTinh %></td>
+                  <td><%= employee.SoDienThoai %></td>
+                  <td><%= employee.DiaChi %></td>
+                  <td><%= employee.MaBoPhan %></td>
+                  <td><%= employee.NgayVaoLam %></td>
                   <td>
-                    <a href="/admin/info/<%= employee.MANHANVIEN %>" class="btn btn-sm btn-warning">
+                    <a href="/admin/info/<%= employee.MaNhanVien %>" class="btn btn-sm btn-warning">
                       <i class="fas fa-edit"></i> Sửa
                     </a>
-                    <a href="/admin/info/delete/<%= employee.MANHANVIEN %>" class="btn btn-sm btn-danger">
+                    <a href="/admin/info/delete/<%= employee.MaNhanVien %>" class="btn btn-sm btn-danger">
                       <i class="fas fa-edit"></i> Xóa
                     </a>
                   </td>
@@ -98,8 +96,8 @@
         branchSelect.innerHTML = `<option value="" disabled selected>Chọn chi nhánh...</option>`;
         branches[selectedArea].forEach(branch => {
             const option = document.createElement('option');
-            option.value = branch;
-            option.textContent = branch;
+            option.value = branch.MaChiNhanh;
+            option.textContent = branch.TenChiNhanh;
             branchSelect.appendChild(option);
         });
     });

@@ -14,31 +14,23 @@
         <!-- Danh sách món sẽ hiển thị ở đây -->
         <% allMonAn.forEach(monAn => { %>
             <div class="col-md-3 col-sm-6 sushi-item mt-4" data-khuvuc="<%= monAn.MaKhuVuc %>">
-                <form action="/booking/cart/add" method="POST" class="food-card">
-                    <a class="food-card" href="">
-                        <div class="food-item position-relative p-3">
-                            <img src="https://media-cdn.tripadvisor.com/media/photo-p/0a/1b/b2/3a/sushi-hokkaido-sachi.jpg" alt="Bánh Mì Cô Chun">
-                            <h5 class="mt-3"><%= monAn.TenMonAn %></h5>
-                            <p class="text-muted mb-2"><%= monAn.MaPhanMuc %></p>
-                            <div class="details d-flex justify-content-between align-items-center">
-                                <span><i class="fa-solid fa-star text-warning"></i> 4.7</span>
-                                <span><i class="fa-solid fa-clock"></i> 15 phút</span>
-                                <span><i class="fa-solid fa-location-dot"></i> 1.5 km</span>
-                            </div>
-                            <p class="mt-2"><%= monAn.Gia %>đ</p>
-                            <p class="mt-2" style="color: black;"><%= monAn.TenKhuVuc %></p>
+                <a class="food-card">
+                    <div class="food-item position-relative p-3">
+                        <img src="https://media-cdn.tripadvisor.com/media/photo-p/0a/1b/b2/3a/sushi-hokkaido-sachi.jpg" alt="Bánh Mì Cô Chun">
+                        <h5 class="mt-3"><%= monAn.TenMonAn %></h5>
+                        <p class="text-muted mb-2"><%= monAn.MaPhanMuc %></p>
+                        <p class="mt-2"><%= monAn.Gia %>đ</p>
 
-                            <input type="hidden" name="email" value="<%= user.Email %>">
-                            <input type="hidden" name="food" value="<%= monAn.MaMon %>">
-                            <input type="hidden" name="staff" value="">
-                            
-                            <!-- Nút dấu cộng -->
-                            <button type="submit" class="add-to-cart-btn btn btn-warning position-absolute" data-id="<%= monAn.MaMon %>">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </div>
-                    </a>
-                </form>
+                        <input type="hidden" name="email" value="<%= user.Email %>">
+                        <input type="hidden" name="food" value="<%= monAn.MaMon %>">
+                        <input type="hidden" name="staff" value="">
+                        
+                        <!-- Nút dấu cộng -->
+                        <button type="submit" class="add-to-cart-btn btn btn-warning position-absolute" data-id="<%= monAn.MaMon %>">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </a>
             </div>                
         <% }) %>
     </div>
@@ -74,6 +66,28 @@
 </div>
 
 <script>
+    const showToast = (toastData) =>  {
+        if (toastData) {
+            const toastEl = document.getElementById('toastMessage');
+            const toastContent = document.getElementById('toastContent');
+      
+            toastContent.innerHTML = `<i class="fa-solid fa-circle-${toastData.type === 'success' ? 'check' : toastData.type === 'danger' ? 'xmark' : 'exclamation'}"></i> ${toastData.message}`;
+      
+            toastEl.classList.remove('text-bg-primary', 'text-bg-danger', 'text-bg-warning', 'text-bg-info');
+            toastEl.classList.add(`text-bg-${toastData.type}`);
+            toastEl.classList.add('position-fixed', 'bottom-0', 'end-0');
+      
+            toastEl.style.display = 'block';
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+
+            var myToastEl = document.getElementById('myToast')
+            myToastEl.addEventListener('hidden.bs.toast', function () {
+              alert('Toast hidden event fired')
+            })
+        }
+    };
+
     document.addEventListener("DOMContentLoaded", () => {
         const areaSelect = document.getElementById("areaSelect");
         const sushiList = document.getElementById("sushiList");
@@ -109,6 +123,37 @@
                 console.error("Failed to load page data:", err);
             }
         });
+        });
+
+        document.addEventListener('click', function(e) {
+            console.log(e.target);
+            if (e.target.classList.contains('add-to-cart-btn') || e.target.parentElement.classList.contains('add-to-cart-btn')) {
+                const foodId = e.target.getAttribute('data-id');
+                const email = e.target.parentElement.querySelector('input[name="email"]').value;
+                const food = e.target.parentElement.querySelector('input[name="food"]').value;
+        
+                fetch('/booking/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, food })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.message) {
+                    showToast({
+                        type: 'success',
+                        message: data.message
+                    })
+                    } else {
+                    showToast({
+                        type: 'danger',
+                        message: data.error
+                    })
+                    }
+                });
+            }
         });
     });
 </script>

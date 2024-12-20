@@ -14,19 +14,26 @@
               <label for="area" class="form-label">Khu Vực</label>
               <select class="form-select" id="area" name="area">
                 <option value="" disabled selected>Chọn Khu Vực</option>
-                <% for (let i = 0; i < areas.length; i++) { %>
-                <option value="<%= areas[i].MaKhuVuc %>">
-                  <%= areas[i].TenKhuVuc %>
-                </option>
-                <% } %>
+                <% areas.forEach(area => { %>
+                  <% if (selectedArea) { %>
+                    <option value="<%= area.MaKhuVuc %>" <%= area.MaKhuVuc === selectedArea ? 'selected' : '' %>><%= area.TenKhuVuc %></option>
+                  <% } else { %>
+                    <option value="<%= area.MaKhuVuc %>"><%= area.TenKhuVuc %></option>
+                  <% } %>
+                <% }) %>
               </select>
             </div>
 
             <div class="col-md-3">
               <!-- Chọn chi nhánh -->
               <label for="branch" class="form-label">Chi Nhánh</label>
-              <select disabled class="form-select" id="branch" name="branch">
-                <option value="all" selected>Tất Cả</option>
+              <select <% if (!selectedBranch) { %>
+               disabled
+              <% } %> class="form-select" id="branch" name="branchId">
+                <option value="" selected>Tất Cả</option>
+                <% if (selectedBranch) { %>
+                  <option value="<%= selectedBranch.MaChiNhanh %>" selected><%= selectedBranch.TenChiNhanh %></option>
+                <% } %>
               </select>
             </div>
           </div>
@@ -35,10 +42,10 @@
             <div class="col-md-3">
               <label for="statType" class="form-label">Loại Thống Kê</label>
               <select class="form-select" id="statType" name="statType">
-                <option value="day" selected>Theo Ngày</option>
-                <option value="month">Theo Tháng</option>
-                <option value="quarter">Theo Quý</option>
-                <option value="year">Theo Năm</option>
+                <option value="ngay" selected>Theo Ngày</option>
+                <option value="thang">Theo Tháng</option>
+                <option value="quy">Theo Quý</option>
+                <option value="nam">Theo Năm</option>
               </select>
             </div>
 
@@ -76,6 +83,7 @@
         <table class="table table-bordered">
           <thead>
             <tr>
+              <th>#</th>
               <th>Thời Gian</th>
               <th>Tổng Doanh Thu (VNĐ)</th>
               <th>Số Lượng Đơn</th>
@@ -85,10 +93,11 @@
           <tbody>
             <% for (let i = 0; i < revenueStats.length; i++) { %>
             <tr>
-              <td><%= revenueStats[i].Ngay %></td>
+              <td><%= i + 1 %></td>
+              <td><%= revenueStats[i].ThoiGian %></td>
               <td><%= revenueStats[i].TongDoanhThu %></td>
-              <td><%= revenueStats[i].orderCount %></td>
-              <td><%= revenueStats[i].note %></td>
+              <td><%= revenueStats[i].SoDon %></td>
+              <td><%= revenueStats[i].GhiChu %></td>
             </tr>
             <% } %>
           </tbody>
@@ -112,8 +121,8 @@
     branchSelect.innerHTML = `<option value="" disabled selected>Chọn chi nhánh...</option>`;
     branches[selectedArea].forEach((branch) => {
       const option = document.createElement("option");
-      option.value = branch;
-      option.textContent = branch;
+      option.value = branch.MaChiNhanh;
+      option.textContent = branch.TenChiNhanh;
       branchSelect.appendChild(option);
     });
   });

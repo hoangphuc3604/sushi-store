@@ -49,7 +49,8 @@
     <% if (gioHang.length > 0) { %>
         <div class="text-end my-4">
             <h4>Tổng tiền: <%= gioHang.reduce((acc, item) => acc + item.Gia * item.SoLuong, 0) %>đ</h4>
-            <form action="/cart/checkout" method="POST">
+            <form action="/booking/cart/checkout" method="POST">
+                <input type="hidden" name="MAKHACHHANG" value="<%= user.MaKhachHang %>">
                 <button type="submit" class="btn btn-success mt-4">Thanh Toán</button>
             </form>
         </div>

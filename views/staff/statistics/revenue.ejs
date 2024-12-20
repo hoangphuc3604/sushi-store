@@ -13,10 +13,10 @@
                     <div class="col-md-3">
                         <label for="statType" class="form-label">Loại Thống Kê</label>
                         <select class="form-select" id="statType" name="statType">
-                            <option value="day" selected>Theo Ngày</option>
-                            <option value="month">Theo Tháng</option>
-                            <option value="quarter">Theo Quý</option>
-                            <option value="year">Theo Năm</option>
+                            <option <% if (statType === "ngay") { %> selected <% } %> value="ngay" selected>Theo Ngày</option>
+                            <option <% if (statType === "thang") { %> selected <% } %> value="thang">Theo Tháng</option>
+                            <option <% if (statType === "quy") { %> selected <% } %> value="quy">Theo Quý</option>
+                            <option <% if (statType === "nam") { %> selected <% } %> value="nam">Theo Năm</option>
                         </select>
                     </div>
             
@@ -48,10 +48,10 @@
                     <tbody>
                         <% for (let i = 0; i < revenueStats.length; i++) { %>
                             <tr>
-                                <td><%= revenueStats[i].time %></td>
-                                <td><%= revenueStats[i].totalRevenue %></td>
-                                <td><%= revenueStats[i].orderCount %></td>
-                                <td><%= revenueStats[i].note %></td>
+                                <td><%= revenueStats[i].ThoiGian %></td>
+                                <td><%= revenueStats[i].TongDoanhThu %></td>
+                                <td><%= revenueStats[i].SoDon %></td>
+                                <td> - </td>
                             </tr>
                         <% } %>
                     </tbody>

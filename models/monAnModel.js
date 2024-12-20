@@ -1,5 +1,4 @@
 const { sql, poolPromise } = require("../utils/db");
-const { idCreator } = require("../utils/idCreator");
 const PER_PAGE = 8;
 
 class MonAn {
@@ -9,16 +8,15 @@ class MonAn {
     return result.recordset;
   }
 
-  // static async monAnByMaChiNhanh(maChiNhanh) {
-  //   const pool = await poolPromise;
-  //   const result = await pool
-  //     .request()
-  //     .input("maChiNhanh", sql.VarChar, maChiNhanh)
-  //     .query(
-  //       "SELECT MONAN.MAMON, MONAN.TENMON TENMON, MONAN.GIA GIA, PHANMUC.TENPHANMUC PHANMUC, KHUVUC.TENKHUVUC KHUVUC, KHUVUC.MAKHUVUC MAKHUVUC FROM MONAN, PHANMUC, THUCDON, KHUVUC WHERE MONAN.MAPHANMUC = PHANMUC.MAPHANMUC AND PHANMUC.MATHUCDON = THUCDON.MATHUCDON AND THUCDON.MAKHUVUC = KHUVUC.MAKHUVUC AND KHUVUC.MAKHUVUC = @maChiNhanh"
-  //     );
-  //   return result.recordset;
-  // }
+  static async monAnByMaChiNhanh(maChiNhanh) {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("maChiNhanh", sql.VarChar, maChiNhanh)
+      .execute("sp_LayThucDonChiNhanh");
+
+    return result.recordset;
+  }
 
   static async one(maMon) {
     const pool = await poolPromise;
@@ -34,7 +32,6 @@ class MonAn {
 
     await pool
       .request()
-      .input("maMon", sql.VarChar, idCreator("MA"))
       .input("tenMonAn", sql.NVarChar, monAn.tenMonAn)
       .input("gia", sql.Decimal, monAn.gia)
       .input("trangThaiPhucVu", sql.Bit, monAn.trangThaiPhucVu)
@@ -55,7 +52,7 @@ class MonAn {
       .input("maPhanMuc", sql.VarChar, monAn.maPhanMuc)
       .execute("sp_ChinhSuaMonAn");
       
-    return await this.getMonAnByMaMonAn(maMon);
+    return await this.one(maMon);
   }
 
   static async delete(maMon) {
@@ -66,16 +63,23 @@ class MonAn {
       .execute("sp_XoaMonAn");
   }
 
-  static async search(query) {
+  static async getSearchLength(query) {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("query", sql.VarChar, `%${query.toLowerCase()}%`)
+      .query("SELECT COUNT(*) AS total FROM MON_AN WHERE LOWER(TenMonAn) LIKE @query");
+    return result.recordset[0].total;
+  }
+
+  static async search(query, page, perPage = 8) {
     const pool = await poolPromise;
     const result = await pool
         .request()
         .input("query", sql.VarChar, `%${query.toLowerCase()}%`)
-        .query(`
-            SELECT * 
-            FROM MON_AN 
-            WHERE LOWER(TenMonAn) LIKE @query
-        `);
+        .input("page", sql.Int, page)
+        .input("perPage", sql.Int, perPage)
+        .query("SELECT * FROM MON_AN WHERE LOWER(TenMonAn) LIKE @query ORDER BY MaMon OFFSET (@page * @perPage) ROWS FETCH NEXT @perPage ROWS ONLY");
     return result.recordset;
   }
 

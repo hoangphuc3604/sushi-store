@@ -19,6 +19,7 @@ router.post("/dish-search/:page", authMiddleware(["staff"]), staffController.dis
 // dish booking
 router.get("/booking", authMiddleware(["staff"]), staffController.renderBooking);
 router.post("/booking", authMiddleware(["staff"]), staffController.booking);
+router.post("/customer-card", authMiddleware(["staff"]), staffController.checkCustomerCard);
 
 // statistics
 router.get("/statistics/revenue", authMiddleware(["staff"]), staffController.renderRevenueStatistics);

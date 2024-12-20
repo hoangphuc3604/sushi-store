@@ -13,6 +13,7 @@ class authControllers {
   async postUserLogin(req, res) {
     const { email, password } = req.body;
     const user = await User.one(email);
+    console.log(user);
     if (!user) {
       const toast = {
         message: "Email không tồn tại",
@@ -56,12 +57,12 @@ class authControllers {
 
   // [GET] /auth/register
   async register(req, res) {
-    res.render("auth/register", { title: "Register", error });
+    res.render("auth/register", { title: "Register" });
   }
 
   // [POST] /auth/register
   async postRegister(req, res) {
-    const { email, password, name, image, cccd, phone, gender } = req.body;
+    const { email, password, name, cccd, phone, gender } = req.body;
     const checkUser = await User.one(email);
     if (checkUser) {
       const toast = {
@@ -71,14 +72,7 @@ class authControllers {
       return res.render("auth/register", { title: "Register", toast });
     }
 
-    await User.add({ email, password, image });
-    await KhachHang.add({
-      email,
-      soDienThoai: phone,
-      tenKhachHang: name,
-      CCCD: cccd,
-      gender,
-    });
+    // chờ thêm sp đk tài khoản
     res.redirect("/auth/login");
   }
 }

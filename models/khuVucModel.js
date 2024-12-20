@@ -65,6 +65,16 @@ class KhuVuc {
       .execute("sp_LayDanhSachPhanMucTrongKhuVuc");
     return result.recordset;
   }
+  
+  static async maKhuVuc(maMon) {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("maMon", sql.VarChar, maMon)
+      .execute("sp_LayMaKhuVucCuaMonAn");
+
+    return result.recordset[0].MaKhuVuc;
+  }
 }
 
 module.exports = KhuVuc;

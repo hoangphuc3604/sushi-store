@@ -14,16 +14,21 @@
                     <select id="area" name="area" class="form-select">
                         <option value="">Chọn khu vực</option>
                         <% areas.forEach(area => { %>
-                            <option value="<%= area.MaKhuVuc %>">
-                            <%= area.TenKhuVuc %>
-                            </option>
+                          <% if (selectedArea) { %>
+                            <option value="<%= area.MaKhuVuc %>" <%= area.MaKhuVuc === selectedArea ? 'selected' : '' %>><%= area.TenKhuVuc %></option>
+                          <% } else { %>
+                            <option value="<%= area.MaKhuVuc %>"><%= area.TenKhuVuc %></option>
+                          <% } %>
                         <% }) %>
                     </select>
                   </div>
                   <div class="col-lg-3 col-md-6 mb-3">
                     <label for="branch" class="form-label">Chi Nhánh</label>
-                    <select disabled id="branch" name="branch" class="form-select">
+                    <select disabled id="branch" name="branchId" class="form-select">
                       <option value="">Chọn chi nhánh</option>
+                      <% if (selectedBranch) { %>
+                        <option value="<%= selectedBranch.MaChiNhanh %>" selected><%= selectedBranch.TenChiNhanh %></option>
+                      <% } %>
                     </select>
                   </div>
                   <div class="col-lg-3 col-md-6 mb-3">
@@ -58,9 +63,9 @@
                         <% revenueStats.forEach((stat, index) => { %>
                           <tr>
                             <td><%= index + 1 %></td>
-                            <td><%= stat.dishName %></td>
-                            <td><%= stat.totalRevenue %> VND</td>
-                            <td><%= stat.quantitySold %></td>
+                            <td><%= stat.TenMonAn %></td>
+                            <td><%= stat.DoanhThu %> VND</td>
+                            <td><%= stat.SoLuongBan %></td>
                           </tr>
                         <% }) %>
                       </tbody>
@@ -85,9 +90,9 @@
                         <% highestDishes.forEach((dish, index) => { %>
                           <tr>
                             <td><%= index + 1 %></td>
-                            <td><%= dish.dishName %></td>
-                            <td><%= dish.quantitySold %></td>
-                            <td><%= dish.totalRevenue %> VND</td>
+                            <td><%= dish.TenMonAn %></td>
+                            <td><%= dish.SoLuongBan %></td>
+                            <td><%= dish.DoanhThu %> VND</td>
                           </tr>
                         <% }) %>
                       </tbody>
@@ -108,9 +113,9 @@
                         <% lowestDishes.forEach((dish, index) => { %>
                           <tr>
                             <td><%= index + 1 %></td>
-                            <td><%= dish.dishName %></td>
-                            <td><%= dish.quantitySold %></td>
-                            <td><%= dish.totalRevenue %> VND</td>
+                            <td><%= dish.TenMonAn %></td>
+                            <td><%= dish.SoLuongBan %></td>
+                            <td><%= dish.DoanhThu %> VND</td>
                           </tr>
                         <% }) %>
                       </tbody>
@@ -134,8 +139,8 @@
       branchSelect.innerHTML = `<option value="" disabled selected>Chọn chi nhánh...</option>`;
       branches[selectedArea].forEach(branch => {
           const option = document.createElement('option');
-          option.value = branch;
-          option.textContent = branch;
+          option.value = branch.MaChiNhanh;
+          option.textContent = branch.TenChiNhanh;
           branchSelect.appendChild(option);
       });
   });

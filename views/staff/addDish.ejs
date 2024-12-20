@@ -67,7 +67,7 @@
         categorySelect.innerHTML = '<option disabled selected value="">Chọn Phân Mục</option>';
         const selectedArea = areaSelect.value;
         categories[selectedArea].forEach(category => {
-            categorySelect.innerHTML += `<option value="${category.MaPhanMuc}">${category.TenPhanMuc}</option>`;
+            categorySelect.innerHTML += `<option value="${category.MAPHANMUC}">${category.TENPHANMUC}</option>`;
         });
 
         categorySelect.addEventListener('change', () => {

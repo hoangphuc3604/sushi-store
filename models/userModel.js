@@ -8,22 +8,30 @@ class User {
       .request()
       .input("email", sql.VarChar, email)
       .query("SELECT * FROM USER_APP WHERE Email = @email");
-    return result.recordset[0];
-  }
+    
+    if (result.recordset.length !== 0) {
+      return {VaiTro: "customer", ...result.recordset[0]};
+    }
 
-  static async add(user) {
-    const pool = await poolPromise;
-    const hash = await bcrypt.hash(user.password, 10);
-
-    await pool
+    const result2 = await pool
       .request()
-      .input("email", sql.VarChar, user.email)
-      .input("password", sql.VarChar, hash)
-      .query(
-        "INSERT INTO [USER_APP] (email, password) VALUES (@email, @password)"
-      );
+      .input("email", sql.VarChar, email)
+      .query("SELECT * FROM STAFF_APP WHERE Email = @email");
 
-    return await this.getUserByEmail(user.email);
+    if (result2.recordset.length !== 0) {
+      return {VaiTro: "staff", ...result2.recordset[0]};
+    }
+
+    const result3 = await pool
+      .request()
+      .input("email", sql.VarChar, email)
+      .query("SELECT * FROM ADMIN_APP WHERE Email = @email");
+
+    if (result3.recordset.length !== 0) {
+      return {VaiTro: "admin", ...result3.recordset[0]};
+    }
+
+    return null;
   }
 }
 
