@@ -15,5 +15,8 @@
     "stripe": "^17.3.1",
     "uuid": "^11.0.3"
   },
-  "type": "commonjs"
+  "type": "commonjs",
+  "scripts": {
+    "start": "nodemon server.js"
+  }
 }
