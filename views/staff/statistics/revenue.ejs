@@ -9,7 +9,7 @@
             <div class="container mt-4">
                 <h2 class="mb-4 text-center">Thống Kê Doanh Thu</h2>
             
-                <form action="/staff/statistics/revenue" method="post" class="row g-3 align-items-center mb-4">
+                <form id="stat-form" class="row g-3 align-items-center mb-4">
                     <div class="col-md-3">
                         <label for="statType" class="form-label">Loại Thống Kê</label>
                         <select class="form-select" id="statType" name="statType">
@@ -45,7 +45,7 @@
                             <th>Ghi Chú</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="revenue-stats">
                         <% for (let i = 0; i < revenueStats.length; i++) { %>
                             <tr>
                                 <td><%= revenueStats[i].ThoiGian %></td>
@@ -60,5 +60,43 @@
         </div>
     </div>
 </div>
+
+<script src="/js/toast.js"></script>
+<script>
+    const statForm = document.getElementById('stat-form');
+    statForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(statForm);
+        const statType = formData.get('statType');
+        const startDate = formData.get('startDate');
+        const endDate = formData.get('endDate');
+
+        const response = await fetch(`/staff/statistics/revenue`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                statType,
+                startDate,
+                endDate
+            })
+        });
+
+        const { revenueStats } = await response.json();
+        const revenueStatsTable = document.getElementById('revenue-stats');
+        revenueStatsTable.innerHTML = '';
+        revenueStats.forEach(stat => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${stat.ThoiGian}</td>
+                <td>${stat.TongDoanhThu}</td>
+                <td>${stat.SoDon}</td>
+                <td> - </td>
+            `;
+            revenueStatsTable.appendChild(row);
+        });
+    });
+</script>
 
 <%- include('../../partials/footer') %>
