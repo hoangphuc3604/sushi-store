@@ -21,8 +21,8 @@
                         <p class="text-muted mb-2"><%= monAn.MaPhanMuc %></p>
                         <p class="mt-2"><%= monAn.Gia %>đ</p>
 
-                        <input type="hidden" name="email" value="<%= user.Email %>">
-                        <input type="hidden" name="food" value="<%= monAn.MaMon %>">
+                        <input type="hidden" name="email" id="email" value="<%= user.Email %>">
+                        <input type="hidden" name="food" id="food-<%= monAn.MaMon %>" value="<%= monAn.MaMon %>">
                         <input type="hidden" name="staff" value="">
                         
                         <!-- Nút dấu cộng -->
@@ -65,29 +65,8 @@
     <% } %>
 </div>
 
+<script src="/js/toast.js"></script>
 <script>
-    const showToast = (toastData) =>  {
-        if (toastData) {
-            const toastEl = document.getElementById('toastMessage');
-            const toastContent = document.getElementById('toastContent');
-      
-            toastContent.innerHTML = `<i class="fa-solid fa-circle-${toastData.type === 'success' ? 'check' : toastData.type === 'danger' ? 'xmark' : 'exclamation'}"></i> ${toastData.message}`;
-      
-            toastEl.classList.remove('text-bg-primary', 'text-bg-danger', 'text-bg-warning', 'text-bg-info');
-            toastEl.classList.add(`text-bg-${toastData.type}`);
-            toastEl.classList.add('position-fixed', 'bottom-0', 'end-0');
-      
-            toastEl.style.display = 'block';
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-
-            var myToastEl = document.getElementById('myToast')
-            myToastEl.addEventListener('hidden.bs.toast', function () {
-              alert('Toast hidden event fired')
-            })
-        }
-    };
-
     document.addEventListener("DOMContentLoaded", () => {
         const areaSelect = document.getElementById("areaSelect");
         const sushiList = document.getElementById("sushiList");
@@ -125,35 +104,35 @@
         });
         });
 
-        document.addEventListener('click', function(e) {
-            console.log(e.target);
-            if (e.target.classList.contains('add-to-cart-btn') || e.target.parentElement.classList.contains('add-to-cart-btn')) {
-                const foodId = e.target.getAttribute('data-id');
-                const email = e.target.parentElement.querySelector('input[name="email"]').value;
-                const food = e.target.parentElement.querySelector('input[name="food"]').value;
-        
-                fetch('/booking/cart/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, food })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.message) {
-                    showToast({
-                        type: 'success',
-                        message: data.message
-                    })
+        const addToCartBtns = document.querySelectorAll(".add-to-cart-btn");
+
+        addToCartBtns.forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                e.preventDefault();
+                const foodId = btn.getAttribute("data-id");
+                const email = document.getElementById("email").value;
+                const food = document.getElementById(`food-${foodId}`).value;
+
+                try {
+                    const res = await fetch("/booking/cart/add", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ email, food }),
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        toastr.success("Đã thêm món ăn vào giỏ hàng", "Thành công");
                     } else {
-                    showToast({
-                        type: 'danger',
-                        message: data.error
-                    })
+                        toastr.error("Không thể thêm món ăn vào giỏ hàng", "Thất bại");
                     }
-                });
-            }
+                } catch (err) {
+                    console.error("Failed to add food to cart:", err);
+                    toastr.error("Không thể thêm món ăn vào giỏ hàng", "Thất bại");
+                }
+            });
         });
     });
 </script>
