@@ -61,6 +61,7 @@ class bookingController {
         const allKhuVuc = await KhuVuc.all();
         const user = await KhachHang.one(email);
         const totalPages = Math.ceil(length / PER_PAGE);
+        
         res.render("booking/foodBooking", { user, allMonAn, allKhuVuc, currentPage, totalPages, role, title: "Đặt Món" });
     }
 
@@ -68,9 +69,9 @@ class bookingController {
         try {
             const {email, food} = req.body;
             GioHang.createGioHang(email, food);
-            res.json({message: "Đã thêm vào giỏ hàng"});
+            res.json({success: true, message: "Đã thêm vào giỏ hàng"});
         } catch (error) {
-            res.json({error: "Đã xảy ra lỗi"});
+            res.json({success: false, message: "Đã có lỗi xảy ra"});
         }
     }
 

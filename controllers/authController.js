@@ -13,40 +13,36 @@ class authControllers {
   async postUserLogin(req, res) {
     const { email, password } = req.body;
     const user = await User.one(email);
-    console.log(user);
     if (!user) {
-      const toast = {
-        message: "Email không tồn tại",
-        type: "danger",
-      };
-      return res.render("auth/login", { title: "Login", toast });
+      return res.json({ success: false, message: "Email không tồn tại" });
     }
 
-    const compare = await bcrypt.compare(password, user.MatKhau.trim());
-    if (!compare) {
-      const toast = {
-        message: "Mật khẩu không chính xác",
-        type: "danger",
-      };
-      return res.render("auth/login", { title: "Login", toast });
+    const checkPassword = await bcrypt.compare(password, user.MatKhau);
+    if (!checkPassword) {
+      return res.json({ success: false, message: "Mật khẩu không đúng" });
     }
 
     const token = createToken({
       email: user.Email,
       role: user.VaiTro,
     });
+    res.cookie("accessToken", token, { httpOnly: true });
 
-    res.cookie("accessToken", token, {
-      expires: new Date(Date.now() + 60 * 60 * 1000),
-    });
-
-    if (user.VaiTro === "staff") {
-      return res.redirect("/staff");
-    } else if (user.VaiTro === "admin") {
-      return res.redirect("/admin");
+    let redirect;
+    if (user.VaiTro === "admin") {
+      redirect = "/admin";
+    } else if (user.VaiTro === "staff") {
+      redirect = "/staff";
     } else {
-      return res.redirect("/");
+      redirect = "/";
     }
+
+    res.json({
+      success: true,
+      message: "Đăng nhập thành công",
+      redirect,
+      token,
+    });
   }
 
   // [GET] /auth/logout
@@ -65,11 +61,7 @@ class authControllers {
     const { email, password, name, cccd, phone, gender } = req.body;
     const checkUser = await User.one(email);
     if (checkUser) {
-      const toast = {
-        message: "Email đã tồn tại",
-        type: "danger",
-      };
-      return res.render("auth/register", { title: "Register", toast });
+      return res.json({ success: false, message: "Email đã tồn tại" });
     }
 
     // chờ thêm sp đk tài khoản
