@@ -16,7 +16,7 @@
                     
                     <% searchResult.forEach(monAn => { %>
                         <div class="col-md-3 col-sm-6">
-                          <a class="food-card">
+                          <a href="/booking/dish-info/<%= monAn.MaMon %>" class="food-card">
                             <div class="food-item position-relative p-3">
                                 <img src="https://media-cdn.tripadvisor.com/media/photo-p/0a/1b/b2/3a/sushi-hokkaido-sachi.jpg" alt="Bánh Mì Cô Chun">
                                 <h5 class="mt-3"><%= monAn.TenMonAn %></h5>
@@ -24,11 +24,6 @@
 
                                 <input type="hidden" name="email" value="<%= user.Email %>">
                                 <input type="hidden" name="food" value="<%= monAn.MaMon %>">
-                                
-                                <!-- Nút dấu cộng -->
-                                <button type="submit" class="add-to-cart-btn btn btn-warning position-absolute" data-id="<%= monAn.MaMon %>">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
                             </div>
                           </a>
                         </div>    

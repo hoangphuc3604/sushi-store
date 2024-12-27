@@ -102,7 +102,7 @@
             </li>
             <% } %>
             <li>
-              <div class="position-absolute top-0 end-0 p-3">
+              <div class="position-absolute top-0 end-0 p-3 mt-2">
                 <img
                   src="/images/avatar.jpg"
                   class="rounded-circle avatar"
@@ -118,14 +118,11 @@
                     class="dropdown-menu dropdown-menu-end"
                     aria-labelledby="userMenu"
                   >
-                    <li>
-                      <a class="dropdown-item" href="/profile">Trang Cá Nhân</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="/history"
-                        >Lịch Sử Mua Hàng</a
-                      >
-                    </li>
+                    <% if (role === "customer") { %>
+                      <li>
+                        <a class="dropdown-item" href="/profile/<%= user.MaKhachHang %>">Trang Cá Nhân</a>
+                      </li>
+                    <% } %>
                     <li>
                       <a class="dropdown-item text-danger" href="/auth/logout"
                         >Đăng Xuất</a

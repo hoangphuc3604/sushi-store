@@ -1,140 +1,177 @@
 <%- include('../partials/header') %>
 
 <div class="container mt-4">
-    <select id="areaSelect" class="form-select">
-        <option value="" selected disabled>Chọn khu vực</option>
-        <% allKhuVuc.forEach(khuVuc => { %>
-            <option value="<%= khuVuc.MaKhuVuc %>"><%= khuVuc.TenKhuVuc %></option>
-        <% }) %>
-    </select>
+  <select id="areaSelect" class="form-select">
+    <option value="" selected disabled>Chọn khu vực</option>
+    <% allKhuVuc.forEach(khuVuc => { %>
+    <option value="<%= khuVuc.MaKhuVuc %>"><%= khuVuc.TenKhuVuc %></option>
+    <% }) %>
+  </select>
 </div>
 
 <div class="container my-4">
-    <div class="row" id="sushiList">
-        <!-- Danh sách món sẽ hiển thị ở đây -->
-        <% allMonAn.forEach(monAn => { %>
-            <div class="col-md-3 col-sm-6 sushi-item mt-4" data-khuvuc="<%= monAn.MaKhuVuc %>">
-                <a class="food-card">
-                    <div class="food-item position-relative p-3">
-                        <img src="https://media-cdn.tripadvisor.com/media/photo-p/0a/1b/b2/3a/sushi-hokkaido-sachi.jpg" alt="Bánh Mì Cô Chun">
-                        <h5 class="mt-3"><%= monAn.TenMonAn %></h5>
-                        <p class="text-muted mb-2"><%= monAn.MaPhanMuc %></p>
-                        <p class="mt-2"><%= monAn.Gia %>đ</p>
+  <div class="row" id="sushiList">
+    <!-- Danh sách món sẽ hiển thị ở đây -->
+    <% allMonAn.forEach(monAn => { %>
+    <div
+      class="col-md-3 col-sm-6 sushi-item mt-4"
+      data-khuvuc="<%= monAn.MaKhuVuc %>"
+    >
+      <a href="/booking/dish-info/<%= monAn.MaMon %>" class="food-card">
+        <div class="food-item position-relative p-3">
+          <img
+            src="https://media-cdn.tripadvisor.com/media/photo-p/0a/1b/b2/3a/sushi-hokkaido-sachi.jpg"
+            alt="Bánh Mì Cô Chun"
+          />
+          <h5 class="mt-3"><%= monAn.TenMonAn %></h5>
+          <p class="text-muted mb-2"><%= monAn.MaPhanMuc %></p>
+          <p class="mt-2"><%= monAn.Gia %>đ</p>
 
-                        <input type="hidden" name="email" id="email" value="<%= user.Email %>">
-                        <input type="hidden" name="food" id="food-<%= monAn.MaMon %>" value="<%= monAn.MaMon %>">
-                        <input type="hidden" name="staff" value="">
-                        
-                        <!-- Nút dấu cộng -->
-                        <button type="submit" class="add-to-cart-btn btn btn-warning position-absolute" data-id="<%= monAn.MaMon %>">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
-                </a>
-            </div>                
-        <% }) %>
-    </div>
+          <input
+            type="hidden"
+            name="email"
+            id="email"
+            value="<%= user.Email %>"
+          />
+          <input
+            type="hidden"
+            name="food"
+            id="food-<%= monAn.MaMon %>"
+            value="<%= monAn.MaMon %>"
+          />
+          <input type="hidden" name="staff" value="" />
 
-    <% if (totalPages !== 1) { %>
-        <div class="pagination-section">
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center" id="pagination">
-                    <!-- Previous Button -->
-                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-                        <a class="page-link" href="/booking/food/<%= currentPage - 1 %>" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-
-                    <!-- Page Numbers -->
-                    <% for (let i = (currentPage >= 3 ? currentPage - 2 : 1); i <= Math.min(totalPages, currentPage + 3); i++) { %>
-                        <li class="page-item <%= currentPage == i ? 'active' : '' %>">
-                            <a class="page-link" href="/booking/food/<%= i %>" ><%= i %></a>
-                        </li>
-                    <% } %>
-
-                    <!-- Next Button -->
-                    <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                        <a class="page-link" href="/booking/food/<%= currentPage + 1 %>" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+          <!-- Nút dấu cộng -->
+          <button
+            type="submit"
+            class="add-to-cart-btn btn btn-warning position-absolute"
+            data-id="<%= monAn.MaMon %>"
+          >
+            <i class="fa-solid fa-plus"></i>
+          </button>
         </div>
-    <% } %>
+      </a>
+    </div>
+    <% }) %>
+  </div>
+
+  <% if (totalPages !== 1) { %>
+  <div class="pagination-section">
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center" id="pagination">
+        <!-- Previous Button -->
+        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+          <a
+            class="page-link"
+            href="/booking/food/<%= currentPage - 1 %>"
+            aria-label="Previous"
+          >
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+
+        <!-- Page Numbers -->
+        <% for (let i = (currentPage >= 3 ? currentPage - 2 : 1); i <=
+        Math.min(totalPages, currentPage + 3); i++) { %>
+        <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+          <a class="page-link" href="/booking/food/<%= i %>"><%= i %></a>
+        </li>
+        <% } %>
+
+        <!-- Next Button -->
+        <li
+          class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>"
+        >
+          <a
+            class="page-link"
+            href="/booking/food/<%= currentPage + 1 %>"
+            aria-label="Next"
+          >
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <% } %>
 </div>
 
 <script src="/js/toast.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const areaSelect = document.getElementById("areaSelect");
-        const sushiList = document.getElementById("sushiList");
+  document.addEventListener("DOMContentLoaded", () => {
+    const areaSelect = document.getElementById("areaSelect");
+    const sushiList = document.getElementById("sushiList");
 
-        areaSelect.addEventListener("change", () => {
-            const selectedArea = areaSelect.value; 
-            const sushiItems = sushiList.querySelectorAll(".sushi-item"); 
+    areaSelect.addEventListener("change", () => {
+      const selectedArea = areaSelect.value;
+      const sushiItems = sushiList.querySelectorAll(".sushi-item");
 
-            sushiItems.forEach(item => {
-                const khuVuc = item.getAttribute("data-khuvuc"); 
-                if (selectedArea === khuVuc || !selectedArea) {
-                    item.style.display = ""; 
-                } else {
-                    item.style.display = "none";
-                }
-            });
-        });
-
-        const paginationLinks = document.querySelectorAll(".pagination a.page-link");
-        const pageContent = document.getElementById("page-content");
-
-        paginationLinks.forEach(link => {
-        link.addEventListener("click", async (e) => {
-            e.preventDefault();
-            const page = parseInt(link.getAttribute("data-page"));
-            if (isNaN(page) || page < 1) return;
-
-            try {
-                window.location.href = `/booking/food/${page}`;
-                document.querySelector(".page-item:first-child").classList.toggle("disabled", page === 1);
-                document.querySelector(".page-item:last-child").classList.toggle("disabled", page === totalPages);
-            } catch (err) {
-                console.error("Failed to load page data:", err);
-            }
-        });
-        });
-
-        const addToCartBtns = document.querySelectorAll(".add-to-cart-btn");
-
-        addToCartBtns.forEach(btn => {
-            btn.addEventListener("click", async (e) => {
-                e.preventDefault();
-                const foodId = btn.getAttribute("data-id");
-                const email = document.getElementById("email").value;
-                const food = document.getElementById(`food-${foodId}`).value;
-
-                try {
-                    const res = await fetch("/booking/cart/add", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ email, food }),
-                    });
-                    const data = await res.json();
-
-                    if (data.success) {
-                        toastr.success("Đã thêm món ăn vào giỏ hàng", "Thành công");
-                    } else {
-                        toastr.error("Không thể thêm món ăn vào giỏ hàng", "Thất bại");
-                    }
-                } catch (err) {
-                    console.error("Failed to add food to cart:", err);
-                    toastr.error("Không thể thêm món ăn vào giỏ hàng", "Thất bại");
-                }
-            });
-        });
+      sushiItems.forEach((item) => {
+        const khuVuc = item.getAttribute("data-khuvuc");
+        if (selectedArea === khuVuc || !selectedArea) {
+          item.style.display = "";
+        } else {
+          item.style.display = "none";
+        }
+      });
     });
+
+    const paginationLinks = document.querySelectorAll(
+      ".pagination a.page-link"
+    );
+    const pageContent = document.getElementById("page-content");
+
+    paginationLinks.forEach((link) => {
+      link.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const page = parseInt(link.getAttribute("data-page"));
+        if (isNaN(page) || page < 1) return;
+
+        try {
+          window.location.href = `/booking/food/${page}`;
+          document
+            .querySelector(".page-item:first-child")
+            .classList.toggle("disabled", page === 1);
+          document
+            .querySelector(".page-item:last-child")
+            .classList.toggle("disabled", page === totalPages);
+        } catch (err) {
+          console.error("Failed to load page data:", err);
+        }
+      });
+    });
+
+    const addToCartBtns = document.querySelectorAll(".add-to-cart-btn");
+
+    addToCartBtns.forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const foodId = btn.getAttribute("data-id");
+        const email = document.getElementById("email").value;
+        const food = document.getElementById(`food-${foodId}`).value;
+
+        try {
+          const res = await fetch("/booking/cart/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, food }),
+          });
+          const data = await res.json();
+
+          if (data.success) {
+            toastr.success("Đã thêm món ăn vào giỏ hàng", "Thành công");
+          } else {
+            toastr.error("Không thể thêm món ăn vào giỏ hàng", "Thất bại");
+          }
+        } catch (err) {
+          console.error("Failed to add food to cart:", err);
+          toastr.error("Không thể thêm món ăn vào giỏ hàng", "Thất bại");
+        }
+      });
+    });
+  });
 </script>
 
 <%- include('../partials/footer') %>
