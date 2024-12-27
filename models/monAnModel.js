@@ -4,7 +4,7 @@ const PER_PAGE = 8;
 class MonAn {
   static async all() {
     const pool = await poolPromise;
-    const result = await pool.request().query("SELECT * FROM MON_AN"); 
+    const result = await pool.request().query("SELECT * FROM MON_AN");
     return result.recordset;
   }
 
@@ -51,7 +51,7 @@ class MonAn {
       .input("trangThaiPhucVu", sql.Bit, monAn.trangThaiPhucVu)
       .input("maPhanMuc", sql.VarChar, monAn.maPhanMuc)
       .execute("sp_ChinhSuaMonAn");
-      
+
     return await this.one(maMon);
   }
 
@@ -68,18 +68,22 @@ class MonAn {
     const result = await pool
       .request()
       .input("query", sql.VarChar, `%${query.toLowerCase()}%`)
-      .query("SELECT COUNT(*) AS total FROM MON_AN WHERE LOWER(TenMonAn) LIKE @query");
+      .query(
+        "SELECT COUNT(*) AS total FROM MON_AN WHERE LOWER(TenMonAn) LIKE @query"
+      );
     return result.recordset[0].total;
   }
 
   static async search(query, page, perPage = 8) {
     const pool = await poolPromise;
     const result = await pool
-        .request()
-        .input("query", sql.VarChar, `%${query.toLowerCase()}%`)
-        .input("page", sql.Int, page)
-        .input("perPage", sql.Int, perPage)
-        .query("SELECT * FROM MON_AN WHERE LOWER(TenMonAn) LIKE @query ORDER BY MaMon OFFSET (@page * @perPage) ROWS FETCH NEXT @perPage ROWS ONLY");
+      .request()
+      .input("query", sql.VarChar, `%${query.toLowerCase()}%`)
+      .input("page", sql.Int, page)
+      .input("perPage", sql.Int, perPage)
+      .query(
+        "SELECT * FROM MON_AN WHERE LOWER(TenMonAn) LIKE @query ORDER BY MaMon OFFSET (@page * @perPage) ROWS FETCH NEXT @perPage ROWS ONLY"
+      );
     return result.recordset;
   }
 
@@ -117,8 +121,20 @@ class MonAn {
       .input("i", sql.Int, index)
       .input("n", sql.Int, PER_PAGE)
       .execute("sp_TimKiemMonAn");
-      
+
     return result.recordset;
+  }
+
+  static async getPhanMuc(maMon) {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("maMon", sql.VarChar, maMon)
+      .query(
+        "SELECT TenPhanMuc FROM PHAN_MUC WHERE MaPhanMuc = (SELECT MaPhanMuc FROM MON_AN WHERE MaMon = @maMon)"
+      );
+
+    return result.recordset[0].TenPhanMuc;
   }
 }
 
