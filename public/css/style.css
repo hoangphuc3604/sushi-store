@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   display: flex;
@@ -6,50 +7,50 @@ html, body {
 }
 
 .hero {
-    color: black;
-    height: 60vh;
-    display: flex;
-    text-align: center;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
-  .avatar {
-    cursor: pointer;
-    border: 2px solid #ffa500;
-  }
+  color: black;
+  height: 60vh;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.avatar {
+  cursor: pointer;
+  border: 2px solid #ffa500;
+}
 
-  body {
-    background-color: #FFF7F3;
+body {
+  background-color: #fff7f3;
 }
 .form-select {
-    border: 2px solid #FF6347; /* Đỏ cam */
+  border: 2px solid #ff6347; /* Đỏ cam */
 }
-.form-control{
-    border: 2px solid #FF6347; /* Đỏ cam */
+.form-control {
+  border: 2px solid #ff6347; /* Đỏ cam */
 }
 .btn-primary {
-    background-color: #FF6347;
-    border: none;
+  background-color: #ff6347;
+  border: none;
 }
 .btn-primary:hover {
-    background-color: #FF4500;
+  background-color: #ff4500;
 }
 
 .logo {
-  height: 30px; 
-  width: 30px; 
-  object-fit: contain; 
+  height: 30px;
+  width: 30px;
+  object-fit: contain;
 }
 
 .btn-outline-danger {
-  color: #FF6347;
-  border-color: #FF6347;
+  color: #ff6347;
+  border-color: #ff6347;
 }
 
 .btn-outline-danger:hover {
-  background-color: #FF6347;
+  background-color: #ff6347;
   color: white;
 }
 
@@ -96,7 +97,7 @@ html, body {
 .food-card {
   cursor: pointer;
   text-decoration: none;
-  color: #FF6347;
+  color: #ff6347;
 }
 
 .flex {
@@ -106,28 +107,28 @@ html, body {
 }
 
 .food-item {
-    position: relative;
+  position: relative;
 }
 
 .add-to-cart-btn {
-    bottom: 10px;
-    right: 10px;
-    padding: 8px 12px;
-    border-radius: 50%;
-    font-size: 1.2rem;
+  bottom: 10px;
+  right: 10px;
+  padding: 8px 12px;
+  border-radius: 50%;
+  font-size: 1.2rem;
 }
 
 .search-form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20%;
 }
 
 .search-form input {
-    border: 2px solid #FF6347;
-    border-radius: 10px;
-    padding: 5px;
+  border: 2px solid #ff6347;
+  border-radius: 10px;
+  padding: 5px;
 }
 
 .search-form button {
@@ -135,11 +136,11 @@ html, body {
 }
 
 .nav-link {
-  color: #FF6347;
+  color: #ff6347;
 }
 
 .nav-link:hover {
-  color: #FF4600;
+  color: #ff4600;
 }
 
 .pagination-section {
@@ -175,6 +176,9 @@ html, body {
   background-color: #ff6347;
   color: white;
 }
+.text-orange {
+  color: #ff6347;
+}
 .btn-orange:hover {
   background-color: #ff4500;
 }
@@ -184,7 +188,6 @@ html, body {
   --secondary-color: #ffe0b2;
   --text-color: #ffffff;
 }
-
 
 .card-header {
   background-color: var(--primary-color);
@@ -231,7 +234,7 @@ html, body {
 }
 
 #cart-btn {
-  margin-left: 10px; 
+  margin-left: 10px;
   margin-top: 5px;
 }
 
@@ -244,19 +247,19 @@ html, body {
 /* Responsive */
 @media (max-width: 768px) {
   .search-form {
-      margin-left: 0;
+    margin-left: 0;
   }
 
   .btn-orange {
-      width: 100%;
+    width: 100%;
   }
 
   .btn-orange:hover {
-      width: 100%;
+    width: 100%;
   }
 
   #brand-name {
-      display: none;
+    display: none;
   }
 
   .avatar {
@@ -326,7 +329,7 @@ html, body {
   background-color: rgba(255, 255, 255, 1);
   color: black;
   border: none;
-  border-radius:  50%;
+  border-radius: 50%;
   cursor: pointer;
   z-index: 1000;
   transition: opacity 0.3s;
@@ -338,5 +341,3 @@ html, body {
 a {
   text-decoration: none;
 }
-
-
