@@ -598,11 +598,10 @@ class staffController {
     const user = await NhanVien.one(staffId);
 
     const { query } = req.body;
-    const totalPages = 3;
     const currentPage = parseInt(req.params.page) || 1;
+    const totalPages = 0;
 
     const cards = await KhachHang.searchTheKhachHang(query);
-    console.log(cards);
     cards.forEach((card) => {
       card.NgayLap = new Date(card.NgayLap).toISOString().split("T")[0];
       card.NgayHetHan
