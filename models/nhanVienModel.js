@@ -69,8 +69,20 @@ class NhanVien {
   static async addOrder(maNhanVien, maKhachHang) {
     console.log(maNhanVien, maKhachHang);
     const pool = await poolPromise;
+
+    const maLonNhat = await pool
+      .request()
+      .query("SELECT MAX(MaPhieu) AS maLonNhat FROM PHIEU_MUA_HANG");
+
+    const number = maLonNhat
+      ? parseInt(maLonNhat.recordset[0].maLonNhat.slice(2)) + 1
+      : 1;
+    const maPhieuDatMon = "PM" + number.toString().padStart(6, "0");
+    console.log(maPhieuDatMon);
+
     await pool
       .request()
+      .input("maPhieu", sql.Char, maPhieuDatMon)
       .input("maNhanVien", sql.Char, maNhanVien)
       .input("ngayLap", sql.DateTime, new Date())
       .input("maKhachHang", sql.Char, maKhachHang)
@@ -83,15 +95,15 @@ class NhanVien {
       .input("ngayDat", sql.DateTime, new Date())
       .execute("sp_TimPhieuDat");
 
-    return result.recordset[0];
+    return result.recordset[0].MaPhieu;
   }
 
   static async addOrderDetail(maPhieuDatMon, maMonAn, soLuong) {
     const pool = await poolPromise;
     await pool
       .request()
-      .input("maPhieuDatMon", sql.Char, maPhieuDatMon)
-      .input("maMonAn", sql.Char, maMonAn)
+      .input("maPhieu", sql.Char, maPhieuDatMon)
+      .input("maMon", sql.Char, maMonAn)
       .input("soLuong", sql.Int, soLuong)
       .execute("sp_ThemChiTietPhieuDatMon");
 

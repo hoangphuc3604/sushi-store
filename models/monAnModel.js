@@ -30,8 +30,16 @@ class MonAn {
   static async add(monAn) {
     const pool = await poolPromise;
 
+    const maLonNhat = await pool
+      .request()
+      .query("SELECT MAX(MaMon) AS maLonNhat FROM MON_AN");
+
+    const number = parseInt(maLonNhat.recordset[0].maLonNhat.slice(2)) + 1;
+    const maMon = "MA" + number.toString().padStart(4, "0");
+
     await pool
       .request()
+      .input("maMon", sql.VarChar, maMon)
       .input("tenMonAn", sql.NVarChar, monAn.tenMonAn)
       .input("gia", sql.Decimal, monAn.gia)
       .input("trangThaiPhucVu", sql.Bit, monAn.trangThaiPhucVu)
@@ -99,8 +107,9 @@ class MonAn {
       .request()
       .input("i", sql.Int, index)
       .input("n", sql.Int, PER_PAGE)
-      .input("query", sql.NVarChar, "")
-      .execute("sp_TimKiemMonAn");
+      .query(
+        "SELECT * FROM MON_AN ORDER BY MaMon OFFSET @i ROWS FETCH NEXT @n ROWS ONLY"
+      );
     return result.recordset;
   }
 

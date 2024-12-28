@@ -64,8 +64,20 @@ class authControllers {
       return res.json({ success: false, message: "Email đã tồn tại" });
     }
 
-    // chờ thêm sp đk tài khoản
-    res.redirect("/auth/login");
+    const hashPassword = await bcrypt.hash(password, 10);
+    const maKhachHang = await KhachHang.add({
+      email,
+      name,
+      cccd,
+      phone,
+      gender,
+    });
+    await User.add({
+      email,
+      password: hashPassword,
+      maKhachHang,
+    });
+    res.json({ success: true, message: "Đăng ký thành công" });
   }
 }
 

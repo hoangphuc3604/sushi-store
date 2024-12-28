@@ -160,6 +160,7 @@ class staffController {
 
     if (memberCard || memberCard === "") {
       const theKhachHang = await KhachHang.oneByTheKhachHang(memberCard);
+      console.log(theKhachHang);
       if (!theKhachHang) {
         return res.json({
           error: true,
@@ -187,7 +188,7 @@ class staffController {
       });
     }
 
-    res.redirect("/");
+    res.json({ error: false, message: "Đặt bàn thành công" });
   }
 
   // [GET] /staff/statistics/revenue
@@ -634,7 +635,7 @@ class staffController {
     });
   }
 
-  // [POST] /staff/customer-card/add xxxx
+  // [POST] /staff/customer-card/add
   async addCustomerCard(req, res) {
     let { email, role } = req;
     const staffId = await NhanVien.getMaNhanVienByEmail(email);

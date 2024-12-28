@@ -160,6 +160,7 @@ class bookingController {
     const { id } = req.params;
     const user = await KhachHang.one(email);
     const monAn = await MonAn.one(id);
+    console.log(monAn);
     monAn.TenPhanMuc = await MonAn.getPhanMuc(id);
     res.render("booking/dishInfo", {
       monAn,
