@@ -58,11 +58,8 @@ class staffController {
   // [GET] /staff/update-dish
   async updateDish(req, res) {
     let { email, role } = req;
-    console.log(email, role);
     const maNhanVien = await NhanVien.getMaNhanVienByEmail(email);
-    console.log(maNhanVien);
     const user = await NhanVien.one(maNhanVien);
-    console.log(user);
 
     const allMonAn = await MonAn.monAnByMaChiNhanh(user.MaChiNhanh);
     res.render("staff/dishUpdate", {
@@ -105,7 +102,7 @@ class staffController {
       tenMonAn: TENMON,
       gia: GIA,
       maPhanMuc: MAPHANMUC,
-      trangThaiPhucVu: TRANGTHAIPHUCVU,
+      trangThaiPhucVu: TRANGTHAIPHUCVU === "1" ? 1 : 0,
     });
     res.redirect("/staff/update-dish");
   }
@@ -119,20 +116,13 @@ class staffController {
     const { query } = req.body;
 
     const currentPage = parseInt(req.params.page) || 1;
-    const allMonAn = await MonAn.searchMonAnByIndex(
-      query,
-      (currentPage - 1) * PER_PAGE
-    );
-    const length = allMonAn.length;
-    const totalPages = Math.ceil(length / PER_PAGE);
+    const allMonAn = await MonAn.search(query);
 
     res.render("staff/dishSearch", {
       title: "Dish Searching",
       user,
       role,
       allMonAn,
-      currentPage,
-      totalPages,
     });
   }
 
@@ -152,15 +142,12 @@ class staffController {
     const staffId = await NhanVien.getMaNhanVienByEmail(email);
     const user = await NhanVien.one(staffId);
 
-    console.log(req.body);
-
     const { table, name, cccd, gender, phone, memberCard, total, dishes } =
       req.body.data;
     const cusEmail = req.body.data.email;
 
     if (memberCard || memberCard === "") {
       const theKhachHang = await KhachHang.oneByTheKhachHang(memberCard);
-      console.log(theKhachHang);
       if (!theKhachHang) {
         return res.json({
           error: true,
@@ -169,9 +156,9 @@ class staffController {
         });
       }
       const maKhachHang = theKhachHang.MaKhachHang;
-      const maPhieu = await NhanVien.addOrder(staffId, maKhachHang);
+      const { MaPhieu } = await NhanVien.addOrder(staffId, maKhachHang);
       dishes.forEach(async (dish) => {
-        await NhanVien.addOrderDetail(maPhieu, dish.id, dish.quantity);
+        await NhanVien.addOrderDetail(MaPhieu, dish.id, dish.quantity);
       });
     } else {
       await KhachHang.add({
@@ -182,9 +169,9 @@ class staffController {
         email: cusEmail,
       });
       const maKhachHang = await KhachHang.one(cusEmail).MaKhachHang;
-      const maPhieu = await NhanVien.addOrder(staffId, maKhachHang);
+      const { MaPhieu } = await NhanVien.addOrder(staffId, maKhachHang);
       dishes.forEach(async (dish) => {
-        await NhanVien.addOrderDetail(maPhieu, dish.id, dish.quantity);
+        await NhanVien.addOrderDetail(MaPhieu, dish.id, dish.quantity);
       });
     }
 
@@ -232,6 +219,11 @@ class staffController {
       endDate,
       statType
     );
+    if (statType === "ngay") {
+      revenueStats.forEach((stat) => {
+        stat.ThoiGian = new Date(stat.ThoiGian).toISOString().split("T")[0];
+      });
+    }
     res.json({ revenueStats });
   }
 
@@ -240,21 +232,17 @@ class staffController {
     let { email, role } = req;
     const staffId = await NhanVien.getMaNhanVienByEmail(email);
     const user = await NhanVien.one(staffId);
-
-    let type, startDate, endDate;
-    type = "day";
-    startDate = new Date().toISOString().split("T")[0];
-    endDate = new Date().toISOString().split("T")[0];
-    let employeeStats = await ChiNhanh.employees(user.MaChiNhanh); // serviceStats
+    let employeeStats = [];
 
     res.render("staff/statistics/service", {
       title: "Employee Statistics",
-      type,
-      startDate,
-      endDate,
       employeeStats,
       user,
       role,
+      id: "",
+      day: "",
+      month: "",
+      year: "",
     });
   }
 
@@ -264,46 +252,21 @@ class staffController {
     const staffId = await NhanVien.getMaNhanVienByEmail(email);
     const user = await NhanVien.one(staffId);
 
-    const { type, startDate, endDate } = req.body;
-    let employeeStats = [
-      {
-        id: 1,
-        name: "Nguyễn Văn A",
-        servicePoint: 10,
-        billCount: 10,
-        note: "-",
-      },
-      {
-        id: 2,
-        name: "Nguyễn Văn B",
-        servicePoint: 10,
-        billCount: 10,
-        note: "-",
-      },
-      {
-        id: 3,
-        name: "Nguyễn Văn C",
-        servicePoint: 10,
-        billCount: 10,
-        note: "-",
-      },
-      {
-        id: 4,
-        name: "Nguyễn Văn D",
-        servicePoint: 10,
-        billCount: 10,
-        note: "-",
-      },
-    ];
+    const { id, day, month, year } = req.body;
+    let employeeStats = await NhanVien.getServicePoint(id, day, month, year);
+    if (employeeStats === false) {
+      employeeStats = [];
+    }
 
     res.render("staff/statistics/service", {
       title: "Employee Statistics",
-      type,
-      startDate,
-      endDate,
       employeeStats,
       user,
       role,
+      id,
+      day,
+      month,
+      year,
     });
   }
 
@@ -338,7 +301,6 @@ class staffController {
     const user = await NhanVien.one(staffId);
 
     const { query, branch } = req.body;
-    console.log(query, branch);
 
     const allKhuVuc = await KhuVuc.all();
     const chiNhanh = {};
@@ -571,22 +533,11 @@ class staffController {
     const currentPage = parseInt(req.params.page) || 1;
     const query = "";
 
-    const cards = await KhachHang.allTheKhachHang();
-    cards.forEach((card) => {
-      card.NgayLap = new Date(card.NgayLap).toISOString().split("T")[0];
-      card.NgayHetHan
-        ? (card.NgayHetHan = new Date(card.NgayHetHan)
-            .toISOString()
-            .split("T")[0])
-        : null;
-    });
-    const totalPages = Math.ceil(cards.length / PER_PAGE);
+    const cards = [];
     res.render("staff/statistics/customerCard", {
       title: "Customer Card",
       cards,
       query,
-      totalPages,
-      currentPage,
       user,
       role,
     });
@@ -645,19 +596,13 @@ class staffController {
 
     const theKhachHang = await KhachHang.oneById(MAKHACHHANG);
     if (!theKhachHang) {
-      const toast = {
-        type: "danger",
-        message: "Khách hàng không tồn tại",
-      };
-      return res.render("staff/statistics/addCustomerCard", {
-        title: "Add Customer Card",
-        role,
-        toast,
-      });
+      return res.json({ success: false, message: "Không tìm thấy khách hàng" });
     }
 
-    await KhachHang.addTheKhachHang(MAKHACHHANG);
-    res.redirect("/staff/customer-card/1");
+    if (!(await KhachHang.addTheKhachHang(MAKHACHHANG))) {
+      return res.json({ success: false, message: "Khách hàng đã có thẻ" });
+    }
+    res.json({ success: true, message: "Thêm thẻ khách hàng thành công" });
   }
 
   async renderEditCustomerCard(req, res) {
@@ -736,9 +681,7 @@ class staffController {
   // [POST] /staff/customer-card
   async checkCustomerCard(req, res) {
     const { card } = req.body;
-    console.log(card);
     const theKhachHang = await KhachHang.oneByTheKhachHang(card);
-    console.log(theKhachHang);
     if (theKhachHang) {
       return res.json({ type: "success", message: "Thẻ khách hàng hợp lệ" });
     } else {

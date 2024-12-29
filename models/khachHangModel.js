@@ -8,7 +8,7 @@ class KhachHang {
       .request()
       .query("SELECT MAX(MaKhachHang) AS maLonNhat FROM KHACH_HANG");
     const number = parseInt(maLonNhat.recordset[0].maLonNhat.slice(2)) + 1;
-    const maKhachHang = "KH" + number.toString().padStart(4, "0");
+    const maKhachHang = "KH" + number.toString().padStart(6, "0");
     console.log(maKhachHang);
 
     await pool
@@ -110,11 +110,16 @@ class KhachHang {
     const number = parseInt(maLonNhat.recordset[0].maLonNhat.slice(2)) + 1;
     const maThe = "TK" + number.toString().padStart(6, "0");
 
-    await pool
-      .request()
-      .input("maThe", sql.VarChar, maThe)
-      .input("maKhachHang", sql.VarChar, maKhachHang)
-      .execute("sp_TaoTheKhachHang");
+    try {
+      await pool
+        .request()
+        .input("maThe", sql.VarChar, maThe)
+        .input("maKhachHang", sql.VarChar, maKhachHang)
+        .execute("sp_TaoTheKhachHang");
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   static async updateTheKhachHang(

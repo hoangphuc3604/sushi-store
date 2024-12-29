@@ -6,6 +6,7 @@ const ChiNhanh = require("../models/chiNhanhModel");
 const PhieuDat = require("../models/phieuDatModel");
 const { createId } = require("../utils/idCreator");
 const NhanVien = require("../models/nhanVienModel");
+const { DateTime } = require("mssql");
 const PER_PAGE = 8;
 
 class bookingController {
@@ -31,7 +32,7 @@ class bookingController {
 
   async tableBooking(req, res) {
     const { email, role } = req;
-    const { branch, people, note, customerId, date } = req.body;
+    const { branch, people, note, customerId, date, time } = req.body;
 
     const customer = await KhachHang.oneById(customerId);
     if (!customer) {
@@ -59,14 +60,15 @@ class bookingController {
       });
     }
 
-    await ChiNhanh.tableBooking(branch, people, date, note, customerId);
+    const datetime = new Date(`${date} ${time}`);
+    await ChiNhanh.tableBooking(branch, people, datetime, note, customerId);
     return res.redirect("/");
   }
 
   async getFoodBooking(req, res) {
     const { email, role } = req;
     const currentPage = parseInt(req.params.page) || 1;
-    const allMonAn = await MonAn.getMonAnByIndex((currentPage - 1) * PER_PAGE);
+    const allMonAn = await MonAn.all();
     allMonAn.forEach(async (cur) => {
       cur.MaKhuVuc = await KhuVuc.maKhuVuc(cur.MaMon);
     });
@@ -125,13 +127,11 @@ class bookingController {
   async cartUpdate(req, res) {
     const { MAMON, MAKHACHHANG, SOLUONG } = req.body;
     await GioHang.updateGioHang(MAMON, MAKHACHHANG, SOLUONG);
-    const previousUrl = req.get("Referer") || "/";
-    res.redirect(previousUrl);
+    res.redirect("/booking/cart/" + MAKHACHHANG);
   }
 
   async cartRemove(req, res) {
     const { MAMON, MAKHACHHANG } = req.body;
-    console.log(MAMON, MAKHACHHANG);
     await GioHang.removeGioHang(MAMON, MAKHACHHANG);
     const previousUrl = req.get("Referer") || "/";
     res.redirect(previousUrl);
@@ -150,6 +150,7 @@ class bookingController {
     const { MaPhieu } = await NhanVien.addOrder(null, MAKHACHHANG);
     gioHang.forEach(async (cur) => {
       await NhanVien.addOrderDetail(MaPhieu, cur.MaMon, cur.SoLuong);
+      await GioHang.removeGioHang(cur.MaMon, MAKHACHHANG);
     });
 
     res.redirect("/");
@@ -160,7 +161,6 @@ class bookingController {
     const { id } = req.params;
     const user = await KhachHang.one(email);
     const monAn = await MonAn.one(id);
-    console.log(monAn);
     monAn.TenPhanMuc = await MonAn.getPhanMuc(id);
     res.render("booking/dishInfo", {
       monAn,

@@ -67,12 +67,13 @@ class NhanVien {
   }
 
   static async addOrder(maNhanVien, maKhachHang) {
-    console.log(maNhanVien, maKhachHang);
     const pool = await poolPromise;
 
     const maLonNhat = await pool
       .request()
       .query("SELECT MAX(MaPhieu) AS maLonNhat FROM PHIEU_MUA_HANG");
+
+    console.log("Ma lon nhat: ", maLonNhat);
 
     const number = maLonNhat
       ? parseInt(maLonNhat.recordset[0].maLonNhat.slice(2)) + 1
@@ -88,14 +89,7 @@ class NhanVien {
       .input("maKhachHang", sql.Char, maKhachHang)
       .execute("sp_ThemPhieuDatMon");
 
-    const result = await pool
-      .request()
-      .input("maNhanVien", sql.Char, maNhanVien)
-      .input("maKhachHang", sql.Char, maKhachHang)
-      .input("ngayDat", sql.DateTime, new Date())
-      .execute("sp_TimPhieuDat");
-
-    return result.recordset[0].MaPhieu;
+    return { MaPhieu: maPhieuDatMon };
   }
 
   static async addOrderDetail(maPhieuDatMon, maMonAn, soLuong) {
@@ -133,6 +127,31 @@ class NhanVien {
         .execute("sp_ChuyenNhanVien");
 
       return true;
+    } catch (error) {
+      console.log(error.message);
+      return false;
+    }
+  }
+
+  static async getServicePoint(maNhanVien, ngay, thang, nam) {
+    try {
+      const pool = await poolPromise;
+
+      ngay = ngay ? parseInt(ngay) : null;
+      thang = thang ? parseInt(thang) : null;
+      nam = nam ? parseInt(nam) : null;
+
+      console.log(maNhanVien, ngay, thang, nam);
+      const result = await pool
+        .request()
+        .input("maNhanVien", sql.Char, maNhanVien)
+        .input("ngay", sql.Int, ngay)
+        .input("thang", sql.Int, thang)
+        .input("nam", sql.Int, nam)
+        .execute("sp_LayDiemDanhGiaTheoThoiGian");
+
+      console.log(result);
+      return result.recordset;
     } catch (error) {
       console.log(error.message);
       return false;

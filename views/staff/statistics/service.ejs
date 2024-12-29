@@ -13,35 +13,51 @@
           method="post"
           class="row g-3 align-items-center mb-4"
         >
-          <div class="col-md-3">
-            <label for="statType" class="form-label">Loại Thống Kê</label>
-            <select class="form-select" id="statType" name="statType">
-              <option value="day" selected>Theo Ngày</option>
-              <option value="month">Theo Tháng</option>
-              <option value="quarter">Theo Quý</option>
-              <option value="year">Theo Năm</option>
-            </select>
-          </div>
-
-          <div class="col-md-3">
-            <label for="startDate" class="form-label">Ngày Bắt Đầu</label>
+          <div class="col-md-2">
+            <label for="id" class="form-label">Mã nhân viên</label>
             <input
-              type="date"
-              id="startDate"
-              name="startDate"
+              type="text"
+              id="id"
+              name="id"
               class="form-control"
-              value="<%= startDate %>"
+              value="<%= id %>"
+              placeholder="Nhập mã nhân viên"
             />
           </div>
 
           <div class="col-md-3">
-            <label for="endDate" class="form-label">Ngày Kết Thúc</label>
+            <label for="day" class="form-label">Ngày</label>
             <input
-              type="date"
-              id="endDate"
-              name="endDate"
+              type="text"
+              id="day"
+              name="day"
               class="form-control"
-              value="<%= endDate %>"
+              value="<%= day %>"
+              placeholder="Nhập ngày"
+            />
+          </div>
+
+          <div class="col-md-3">
+            <label for="month" class="form-label">Tháng</label>
+            <input
+              type="text"
+              id="month"
+              name="month"
+              class="form-control"
+              value="<%= month %>"
+              placeholder="Nhập tháng"
+            />
+          </div>
+
+          <div class="col-md-3">
+            <label for="year" class="form-label">Năm</label>
+            <input
+              type="text"
+              id="year"
+              name="year"
+              class="form-control"
+              value="<%= year %>"
+              placeholder="Nhập năm"
             />
           </div>
 
@@ -59,19 +75,15 @@
               <tr>
                 <th>Mã Nhân Viên</th>
                 <th>Tên Nhân Viên</th>
-                <th>Điểm Phục Vụ</th>
-                <th>Số Hóa Đơn</th>
-                <th>Ghi Chú</th>
+                <th>Điểm Phục Vụ Trung Bình</th>
               </tr>
             </thead>
             <tbody>
               <% employeeStats.forEach(employee => { %>
               <tr>
-                <td><%= employee.id %></td>
-                <td><%= employee.name %></td>
-                <td><%= employee.servicePoint %></td>
-                <td><%= employee.billCount %></td>
-                <td><%= employee.note %></td>
+                <td><%= employee.MaNhanVien %></td>
+                <td><%= employee.HoTen %></td>
+                <td><%= employee.DiemPhucVuTrungBinh %></td>
               </tr>
               <% }) %>
             </tbody>

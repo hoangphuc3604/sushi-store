@@ -48,7 +48,12 @@ class adminController {
       branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn);
     }
 
-    const revenueStats = await ChiNhanh.revenueStats(branchId, startDate, endDate, statType);
+    const revenueStats = await ChiNhanh.revenueStats(
+      branchId,
+      startDate,
+      endDate,
+      statType
+    );
 
     res.render("admin/revenue", {
       role,
@@ -110,9 +115,23 @@ class adminController {
       branches[cur.MaKhuVuc] = chiNhanhs.map((cn) => cn);
     }
 
-    const revenueStats = await ChiNhanh.menuStats(branchId ? branchId : null, startDate, endDate);
-    const highestDishes = await ChiNhanh.highestDishes(branchId ? branchId : null, startDate, endDate);
-    const lowestDishes = await ChiNhanh.lowestDishes(branchId ? branchId : null, startDate, endDate);
+    console.log(branchId, startDate, endDate);
+
+    const revenueStats = await ChiNhanh.menuStats(
+      branchId ? branchId : null,
+      startDate,
+      endDate
+    );
+    const highestDishes = await ChiNhanh.highestDishes(
+      branchId ? branchId : null,
+      startDate,
+      endDate
+    );
+    const lowestDishes = await ChiNhanh.lowestDishes(
+      branchId ? branchId : null,
+      startDate,
+      endDate
+    );
 
     res.render("admin/menuStats", {
       role,
@@ -125,10 +144,10 @@ class adminController {
       areas,
       highestDishes,
       lowestDishes,
-      selectedArea: area, 
+      selectedArea: area,
       selectedBranch: await ChiNhanh.one(branchId),
       startDate,
-      endDate
+      endDate,
     });
   }
 
@@ -181,20 +200,27 @@ class adminController {
   async transStaff(req, res) {
     const { email, role } = req;
     const { MaBoPhan, id, Luong } = req.body;
-    console.log(req.body);
     const nv = await NhanVien.one(id);
     if (!(await NhanVien.transfer(id, nv.HoTen, MaBoPhan, Luong))) {
       const toast = {
         message: "Không thể chuyển nhân viên này",
         type: "danger",
       };
-      return res.render("admin/adminDashboard", { role, title: "Trang quản trị", toast });
+      return res.render("admin/adminDashboard", {
+        role,
+        title: "Trang quản trị",
+        toast,
+      });
     } else {
       const toast = {
         message: "Chuyển nhân viên thành công",
         type: "success",
       };
-      return res.render("admin/adminDashboard", { role, title: "Trang quản trị", toast });
+      return res.render("admin/adminDashboard", {
+        role,
+        title: "Trang quản trị",
+        toast,
+      });
     }
   }
 
@@ -233,20 +259,24 @@ class adminController {
     if (!branch) {
       employees = (await NhanVien.all()).map((nv) => {
         return {
-          ...nv, 
+          ...nv,
           NgaySinh: new Date(nv.NgaySinh).toISOString().split("T")[0],
           NgayVaoLam: new Date(nv.NgayVaoLam).toISOString().split("T")[0],
-          NgayNghiViec: nv.NgayNghiViec ? new Date(nv.NgayNghiViec).toISOString().split("T")[0] : null,
-        }
+          NgayNghiViec: nv.NgayNghiViec
+            ? new Date(nv.NgayNghiViec).toISOString().split("T")[0]
+            : null,
+        };
       });
     } else {
       employees = (await ChiNhanh.employees(branch)).map((nv) => {
         return {
-          ...nv, 
+          ...nv,
           NgaySinh: new Date(nv.NgaySinh).toISOString().split("T")[0],
           NgayVaoLam: new Date(nv.NgayVaoLam).toISOString().split("T")[0],
-          NgayNghiViec: nv.NgayNghiViec ? new Date(nv.NgayNghiViec).toISOString().split("T")[0] : null,
-        }
+          NgayNghiViec: nv.NgayNghiViec
+            ? new Date(nv.NgayNghiViec).toISOString().split("T")[0]
+            : null,
+        };
       });
     }
 
@@ -265,8 +295,12 @@ class adminController {
     const { id } = req.params;
     const employee = await NhanVien.one(id);
     employee.NgaySinh = new Date(employee.NgaySinh).toISOString().split("T")[0];
-    employee.NgayVaoLam = new Date(employee.NgayVaoLam).toISOString().split("T")[0];
-    employee.NgayNghiViec = employee.NgayNghiViec ? new Date(employee.NgayNghiViec).toISOString().split("T")[0] : null;
+    employee.NgayVaoLam = new Date(employee.NgayVaoLam)
+      .toISOString()
+      .split("T")[0];
+    employee.NgayNghiViec = employee.NgayNghiViec
+      ? new Date(employee.NgayNghiViec).toISOString().split("T")[0]
+      : null;
 
     res.render("admin/updateEmployee", {
       role,
@@ -290,12 +324,16 @@ class adminController {
     const { id } = req.params;
     const { role } = req;
 
-    if (!await NhanVien.delete(id)) {
+    if (!(await NhanVien.delete(id))) {
       const toast = {
         message: "Không thể xóa nhân viên này",
         type: "danger",
       };
-      return res.render("admin/adminDashboard", { role, title: "Trang quản trị", toast });
+      return res.render("admin/adminDashboard", {
+        role,
+        title: "Trang quản trị",
+        toast,
+      });
     }
     res.redirect("/admin/info");
   }

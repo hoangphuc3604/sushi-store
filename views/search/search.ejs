@@ -1,204 +1,37 @@
 <%- include('../partials/header') %>
 
 <div class="container">
-    <div class="mt-4">
-        <h3>Search results for query: "<%= query %>"</h3>
+  <div class="mt-4">
+    <h3>Search results for query: "<%= query %>"</h3>
+  </div>
+
+  <% if (searchResult.length === 0) { %>
+  <div class="mt-4">
+    <p>No results found.</p>
+  </div>
+  <% } else { %>
+  <!-- Menu Section -->
+  <div class="container py-2 mt-4">
+    <div class="row g-4">
+      <% searchResult.forEach(monAn => { %>
+      <div class="col-md-3 col-sm-6">
+        <a href="/booking/dish-info/<%= monAn.MaMon %>" class="food-card">
+          <div class="food-item position-relative p-3">
+            <img
+              src="https://media-cdn.tripadvisor.com/media/photo-p/0a/1b/b2/3a/sushi-hokkaido-sachi.jpg"
+              alt="Bánh Mì Cô Chun"
+            />
+            <h5 class="mt-3"><%= monAn.TenMonAn %></h5>
+            <p class="mt-2"><%= monAn.Gia %>đ</p>
+
+            <input type="hidden" name="email" value="<%= user.Email %>" />
+            <input type="hidden" name="food" value="<%= monAn.MaMon %>" />
+          </div>
+        </a>
+      </div>
+      <% }) %>
     </div>
-
-    <% if (searchResult.length === 0) { %>
-        <div class="mt-4">
-            <p>No results found.</p>
-        </div>
-    <% } else { %>
-            <!-- Menu Section -->
-            <div class="container py-2 mt-4">
-                <div class="row g-4">
-                    
-                    <% searchResult.forEach(monAn => { %>
-                        <div class="col-md-3 col-sm-6">
-                          <a href="/booking/dish-info/<%= monAn.MaMon %>" class="food-card">
-                            <div class="food-item position-relative p-3">
-                                <img src="https://media-cdn.tripadvisor.com/media/photo-p/0a/1b/b2/3a/sushi-hokkaido-sachi.jpg" alt="Bánh Mì Cô Chun">
-                                <h5 class="mt-3"><%= monAn.TenMonAn %></h5>
-                                <p class="mt-2"><%= monAn.Gia %>đ</p>
-
-                                <input type="hidden" name="email" value="<%= user.Email %>">
-                                <input type="hidden" name="food" value="<%= monAn.MaMon %>">
-                            </div>
-                          </a>
-                        </div>    
-                    <% }) %>
-                    
-                    <div class="d-flex justify-content-center">
-                        <nav aria-label="Page navigation">
-                          <ul class="pagination">
-                            <!-- Prev Page -->
-                            <li class="page-item p-page <%= prevPage ? 'enabled' : 'disabled' %>">
-                              <div class="page-link" <%= prevPage ? `data-page="${prevPage}"` : '' %>>
-                                <span aria-hidden="true">&laquo;</span>
-                              </div>
-                            </li>
-                      
-                            <!-- Page Numbers -->
-                            <% pages.forEach(function(page) { %>
-                              <li class="page-item">
-                                <div class="page-link" data-page="<%= page %>"><%= page %></div>
-                              </li>
-                            <% }); %>
-                      
-                            <!-- Next Page -->
-                            <li class="page-item n-page <%= nextPage ? 'enabled' : 'disabled' %>">
-                              <div class="page-link" <%= nextPage ? `data-page="${nextPage}"` : '' %>>
-                                <span aria-hidden="true">&raquo;</span>
-                              </div>
-                            </li>
-                          </ul>
-                        </nav>
-                    </div>                                            
-                </div>
-            </div>
-    <% } %>
+  </div>
+  <% } %>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {  
-  
-      const changeActive = () => {
-        const pageLinks = document.querySelectorAll('.page-link');
-  
-        pageLinks.forEach(link => {
-          link.parentElement.classList.remove('active');
-  
-          if (link.getAttribute('data-page') === currentPage.toString() && !link.parentElement.classList.contains('n-page') && !link.parentElement.classList.contains('p-page')) {
-            link.parentElement.classList.add('active');
-          }
-  
-          if (currentPage === 1 && link.parentElement.classList.contains('p-page')) {
-            link.parentElement.classList.remove('enabled');
-            link.parentElement.classList.add('disabled');
-          }
-  
-          if (currentPage === totalPages && link.parentElement.classList.contains('n-page')) {
-            link.parentElement.classList.remove('enabled');
-            link.parentElement.classList.add('disabled');
-          }
-  
-          if (currentPage !== 1 && link.parentElement.classList.contains('p-page')) {
-            link.parentElement.classList.remove('disabled');
-            link.parentElement.classList.add('enabled');
-          }
-  
-          if (currentPage !== totalPages && link.parentElement.classList.contains('n-page')) {
-            link.parentElement.classList.remove('disabled');
-            link.parentElement.classList.add('enabled');
-          }
-        });
-      };
-  
-      let currentPage = JSON.parse(JSON.stringify("<%= currentPage %>"));
-      let totalPages = JSON.parse(JSON.stringify("<%= totalPages %>"));
-      let user = JSON.parse('<%= JSON.stringify(user) %>');
-      console.log(currentPage, user);
-  
-      changeActive();
-  
-      const pageLinks = document.querySelectorAll('.page-link');
-  
-      pageLinks.forEach(link => {
-        link.addEventListener('click', function() {
-          const page = link.getAttribute('data-page');
-          currentPage = parseInt(page);
-          
-          document.querySelector('.p-page').children[0].setAttribute('data-page', currentPage - 1);
-          document.querySelector('.n-page').children[0].setAttribute('data-page', currentPage + 1);
-  
-          changeActive();
-          fetch(`/search-result/${query}?page=${page}`)
-            .then(res => res.json())
-            .then(data => {
-                const searchResult = data.searchResult;
-                let html = '';
-    
-                searchResult.forEach(monAn => {
-                    html += `
-                    <div class="col-md-3 col-sm-6">
-                        <form action="booking/cart/add" method="POST" class="food-card" id="foodCart">
-                            <a class="food-card" href="/booking/food/${monAn.MaMon}">
-                                <div class="food-item position-relative p-3">
-                                <img src="https://media-cdn.tripadvisor.com/media/photo-p/0a/1b/b2/3a/sushi-hokkaido-sachi.jpg" alt="Bánh Mì Cô Chun">
-                                <h5 class="mt-3">${monAn.TenMonAn}</h5>
-                                <p class="mt-2">${monAn.Gia}đ</p>
-        
-                                <input type="hidden" name="email" value="${user.Email}">
-                                <input type="hidden" name="food" value="${monAn.MaMon}">
-        
-                                <button type="submit" class="add-to-cart-btn btn btn-warning position-absolute" data-id="${monAn.MaMon}" form="foodCart">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                                </div>
-                            </a>
-                        </form>
-                    </div>
-                    `;
-                });
-    
-                document.querySelector('.row').innerHTML = html;
-            });
-        });
-      });
-    });
-
-    const showToast = (toastData) =>  {
-        if (toastData) {
-            const toastEl = document.getElementById('toastMessage');
-            const toastContent = document.getElementById('toastContent');
-      
-            toastContent.innerHTML = `<i class="fa-solid fa-circle-${toastData.type === 'success' ? 'check' : toastData.type === 'danger' ? 'xmark' : 'exclamation'}"></i> ${toastData.message}`;
-      
-            toastEl.classList.remove('text-bg-primary', 'text-bg-danger', 'text-bg-warning', 'text-bg-info');
-            toastEl.classList.add(`text-bg-${toastData.type}`);
-            toastEl.classList.add('position-fixed', 'bottom-0', 'end-0');
-      
-            toastEl.style.display = 'block';
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-
-            var myToastEl = document.getElementById('myToast')
-            myToastEl.addEventListener('hidden.bs.toast', function () {
-              alert('Toast hidden event fired')
-            })
-        }
-    };
-
-    document.addEventListener('click', function(e) {
-      if (e.target.classList.contains('add-to-cart-btn') || e.target.parentElement.classList.contains('add-to-cart-btn')) {
-        const foodId = e.target.getAttribute('data-id');
-        const email = e.target.parentElement.querySelector('input[name="email"]').value;
-        const food = e.target.parentElement.querySelector('input[name="food"]').value;
-  
-        fetch('/booking/cart/add', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email, food })
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data.message) {
-              showToast({
-                type: 'success',
-                message: data.message
-              })
-            } else {
-              showToast({
-                type: 'danger',
-                message: data.error
-              })
-            }
-          });
-      }
-    });
-</script>
-
 <%- include('../partials/footer') %>

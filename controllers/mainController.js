@@ -22,11 +22,8 @@ class mainController {
     const { email, role } = req;
     const { query } = req.body;
 
-    const searchResult = await MonAn.search(query, 0);
+    const searchResult = await MonAn.search(query);
     const user = await KhachHang.one(email);
-    const totalPages = Math.ceil((await MonAn.getSearchLength(query)) / 8);
-    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-    const currentPage = 1;
 
     res.render("search/search", {
       query,
@@ -34,18 +31,12 @@ class mainController {
       user,
       title: "Kết quả tìm kiếm",
       role,
-      pages,
-      currentPage,
-      totalPages,
-      prevPage: currentPage - 1,
-      nextPage: currentPage + 1,
     });
   }
 
   async searchResult(req, res) {
-    const { query, page } = req.query;
-    const currentPage = parseInt(page) || 1;
-    const searchResult = await MonAn.search(query, currentPage - 1);
+    const { query } = req.query;
+    const searchResult = await MonAn.search(query);
 
     res.json(searchResult);
   }

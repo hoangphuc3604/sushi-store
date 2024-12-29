@@ -26,7 +26,6 @@ class ChiNhanh {
         .input("loaiThongKe", sql.VarChar, statType)
         .execute("sp_ThongKeDoanhThuChiNhanh");
 
-      console.log(result.recordset);
       return result.recordset || [];
     } catch (error) {
       console.log(error.message);
@@ -84,7 +83,7 @@ class ChiNhanh {
       .request()
       .input("maChiNhanh", sql.VarChar, branchId)
       .input("soLuongNguoi", sql.Int, numberOfPeople)
-      .input("ngay", sql.Date, date)
+      .input("ngay", sql.DateTime, date)
       .input("ghiChu", sql.NVarChar, note)
       .input("maKhachHang", sql.VarChar, customerId)
       .input("ngayTao", sql.DateTime, new Date())

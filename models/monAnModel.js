@@ -82,16 +82,12 @@ class MonAn {
     return result.recordset[0].total;
   }
 
-  static async search(query, page, perPage = 8) {
+  static async search(query) {
     const pool = await poolPromise;
     const result = await pool
       .request()
       .input("query", sql.VarChar, `%${query.toLowerCase()}%`)
-      .input("page", sql.Int, page)
-      .input("perPage", sql.Int, perPage)
-      .query(
-        "SELECT * FROM MON_AN WHERE LOWER(TenMonAn) LIKE @query ORDER BY MaMon OFFSET (@page * @perPage) ROWS FETCH NEXT @perPage ROWS ONLY"
-      );
+      .query("SELECT * FROM MON_AN WHERE LOWER(TenMonAn) LIKE @query");
     return result.recordset;
   }
 

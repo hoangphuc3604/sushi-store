@@ -28,8 +28,8 @@
                         <div class="mb-3">
                             <label for="dishStatus" class="form-label">Trạng Thái Phục Vụ:</label>
                             <select class="form-select" id="dishStatus" name="TRANGTHAIPHUCVU">
-                                <option value="1" <%= monAn.TrangThaiPhucVu === 1 ? 'selected' : '' %>>Phục vụ</option>
-                                <option value="0" <%= monAn.TrangThaiPhucVu === 0 ? 'selected' : '' %>>Ngừng phục vụ</option>
+                                <option value="1" <%= monAn.TrangThaiPhucVu === true ? 'selected' : '' %>>Phục vụ</option>
+                                <option value="0" <%= monAn.TrangThaiPhucVu === false ? 'selected' : '' %>>Ngừng phục vụ</option>
                             </select>
                         </div>
 
